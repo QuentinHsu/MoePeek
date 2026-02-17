@@ -4,6 +4,8 @@ import SwiftUI
 /// Manages the lifecycle and positioning of the popup translation panel.
 @MainActor
 final class PopupPanelController {
+    var onDismiss: (() -> Void)?
+
     private var panel: PopupPanel?
     private var dismissMonitor: PopupDismissMonitor?
 
@@ -68,6 +70,7 @@ final class PopupPanelController {
         dismissMonitor = nil
         panel?.orderOut(nil)
         coordinator.dismiss()
+        onDismiss?()
     }
 
     var isVisible: Bool {

@@ -27,4 +27,10 @@ extension Defaults.Keys {
 
     // Clipboard grabber timeout
     static let clipboardTimeout = Key<Int>("clipboardTimeout", default: 200)
+
+    // Auto-detect text selection
+    static let isAutoDetectEnabled = Key<Bool>("isAutoDetectEnabled", default: true)
+
+    // Onboarding
+    static let hasCompletedOnboarding = Key<Bool>("hasCompletedOnboarding", default: false)
 }

@@ -1,0 +1,6 @@
+// Code Signing Configuration
+// Copy this file to Signing.xcconfig and fill in your values.
+
+CODE_SIGN_STYLE = Manual
+CODE_SIGN_IDENTITY = Apple Development: YOUR_NAME (YOUR_TEAM_ID)
+DEVELOPMENT_TEAM = YOUR_TEAM_ID

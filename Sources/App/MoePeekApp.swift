@@ -7,11 +7,7 @@ struct MoePeekApp: App {
     var body: some Scene {
         // Menu bar icon + dropdown
         MenuBarExtra("MoePeek", systemImage: "character.bubble") {
-            if let coordinator = appDelegate.coordinator,
-               let panelController = appDelegate.panelController
-            {
-                MenuItemView(coordinator: coordinator, panelController: panelController)
-            }
+            MenuItemView(appDelegate: appDelegate)
         }
 
         // Settings window

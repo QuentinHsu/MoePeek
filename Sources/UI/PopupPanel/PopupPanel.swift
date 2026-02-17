@@ -14,7 +14,7 @@ final class PopupPanel: NSPanel {
         isOpaque = false
         backgroundColor = .clear
         hidesOnDeactivate = false
-        isMovableByWindowBackground = false
+        isMovableByWindowBackground = true
         collectionBehavior = [.canJoinAllSpaces, .fullScreenAuxiliary]
 
         // Rounded corners
@@ -23,6 +23,6 @@ final class PopupPanel: NSPanel {
         contentView?.layer?.masksToBounds = true
     }
 
-    // Do not become key window — prevents stealing focus.
-    override var canBecomeKey: Bool { false }
+    // Allow becoming key window so users can select/copy text within the panel.
+    override var canBecomeKey: Bool { true }
 }

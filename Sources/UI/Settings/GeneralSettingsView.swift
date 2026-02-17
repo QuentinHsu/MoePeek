@@ -5,6 +5,7 @@ import SwiftUI
 
 struct GeneralSettingsView: View {
     @Default(.targetLanguage) private var targetLanguage
+    @Default(.isAutoDetectEnabled) private var isAutoDetectEnabled
 
     @State private var launchAtLogin = SMAppService.mainApp.status == .enabled
 
@@ -33,7 +34,9 @@ struct GeneralSettingsView: View {
                     }
                 }
 
-                Toggle("Launch at Login", isOn: $launchAtLogin)
+                Toggle("选中文字自动翻译", isOn: $isAutoDetectEnabled)
+
+                Toggle("登录时启动", isOn: $launchAtLogin)
                     .onChange(of: launchAtLogin) { _, newValue in
                         do {
                             if newValue {

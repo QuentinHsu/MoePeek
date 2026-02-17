@@ -1,0 +1,6 @@
+{
+  "setup": [
+    "tuist install\ntuist generate"
+  ],
+  "teardown": []
+}

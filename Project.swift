@@ -12,8 +12,8 @@ let project = Project(
             "SWIFT_STRICT_CONCURRENCY": "complete",
         ],
         configurations: [
-            .debug(name: "Debug"),
-            .release(name: "Release"),
+            .debug(name: "Debug", xcconfig: "Configurations/Signing.xcconfig"),
+            .release(name: "Release", xcconfig: "Configurations/Signing.xcconfig"),
         ]
     ),
     targets: [
