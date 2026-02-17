@@ -71,24 +71,18 @@ final class TranslationCoordinator {
         let service = resolveService()
 
         do {
-            var accumulated = ""
-            for try await chunk in service.translateStream(trimmed, from: detectedLang, to: targetLang) {
-                accumulated += chunk
-                state = .streaming(sourceText: trimmed, partial: accumulated)
-            }
-
-            guard !accumulated.isEmpty else {
-                throw TranslationError.emptyResult
-            }
-
-            let result = TranslationResult(
-                sourceText: trimmed,
-                translatedText: accumulated,
-                sourceLang: detectedLang ?? "unknown",
-                targetLang: targetLang,
-                service: service.name
+            let result = try await performStreamingTranslation(
+                text: trimmed, service: service,
+                detectedLang: detectedLang, targetLang: targetLang
             )
             state = .completed(result)
+        } catch let error as TranslationError where error.shouldFallback {
+            await attemptFallbackTranslation(
+                text: trimmed,
+                detectedLang: detectedLang,
+                targetLang: targetLang,
+                originalError: error
+            )
         } catch {
             state = .error(error.localizedDescription)
         }
@@ -99,6 +93,51 @@ final class TranslationCoordinator {
     }
 
     // MARK: - Private
+
+    private func performStreamingTranslation(
+        text: String,
+        service: any TranslationService,
+        detectedLang: String?,
+        targetLang: String
+    ) async throws -> TranslationResult {
+        var accumulated = ""
+        for try await chunk in service.translateStream(text, from: detectedLang, to: targetLang) {
+            accumulated += chunk
+            state = .streaming(sourceText: text, partial: accumulated)
+        }
+        guard !accumulated.isEmpty else {
+            throw TranslationError.emptyResult
+        }
+        return TranslationResult(
+            sourceText: text,
+            translatedText: accumulated,
+            sourceLang: detectedLang ?? "unknown",
+            targetLang: targetLang,
+            service: service.name
+        )
+    }
+
+    private func attemptFallbackTranslation(
+        text: String,
+        detectedLang: String?,
+        targetLang: String,
+        originalError: TranslationError
+    ) async {
+        guard let apiKey = KeychainHelper.load(key: "openai_api_key"), !apiKey.isEmpty else {
+            state = .error(originalError.localizedDescription)
+            return
+        }
+
+        do {
+            let result = try await performStreamingTranslation(
+                text: text, service: OpenAITranslationService(),
+                detectedLang: detectedLang, targetLang: targetLang
+            )
+            state = .completed(result)
+        } catch {
+            state = .error(error.localizedDescription)
+        }
+    }
 
     private func resolveTargetLanguage(detected: String?) -> String {
         let preferred = Defaults[.targetLanguage]

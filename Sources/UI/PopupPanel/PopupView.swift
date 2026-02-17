@@ -31,14 +31,20 @@ struct PopupView: View {
             case let .streaming(sourceText, partial):
                 sourceTextView(sourceText)
                 Divider()
-                Text(partial)
-                    .textSelection(.enabled)
+                ScrollView {
+                    Text(partial)
+                        .textSelection(.enabled)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                }
 
             case let .completed(result):
                 sourceTextView(result.sourceText)
                 Divider()
-                Text(result.translatedText)
-                    .textSelection(.enabled)
+                ScrollView {
+                    Text(result.translatedText)
+                        .textSelection(.enabled)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                }
                 HStack {
                     Button {
                         NSPasteboard.general.clearContents()
@@ -68,7 +74,7 @@ struct PopupView: View {
             }
         }
         .padding(14)
-        .frame(minWidth: 280, maxWidth: 500)
+        .frame(minWidth: 280, maxWidth: 500, maxHeight: 400)
         .background(.regularMaterial)
         .clipShape(RoundedRectangle(cornerRadius: 12))
     }

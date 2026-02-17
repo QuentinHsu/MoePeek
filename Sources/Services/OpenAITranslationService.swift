@@ -113,6 +113,8 @@ enum TranslationError: LocalizedError {
     case missingAPIKey
     case apiError(statusCode: Int, message: String)
     case emptyResult
+    case languageNotInstalled(source: String?, target: String)
+    case languageUnsupported(source: String?, target: String)
 
     var errorDescription: String? {
         switch self {
@@ -121,6 +123,17 @@ enum TranslationError: LocalizedError {
         case .missingAPIKey: "API key not configured. Go to Settings to set it up."
         case let .apiError(code, msg): "API error (\(code)): \(msg)"
         case .emptyResult: "Translation returned empty result"
+        case let .languageNotInstalled(src, tgt):
+            "Language pack not downloaded (\(src ?? "auto") → \(tgt)). Download it in Settings or switch to OpenAI."
+        case let .languageUnsupported(src, tgt):
+            "Language pair not supported (\(src ?? "auto") → \(tgt)) by Apple Translation."
+        }
+    }
+
+    var shouldFallback: Bool {
+        switch self {
+        case .languageNotInstalled, .languageUnsupported: true
+        default: false
         }
     }
 }

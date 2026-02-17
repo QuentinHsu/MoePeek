@@ -17,6 +17,35 @@ struct AppleTranslationService: TranslationService {
         let source = sourceLang.flatMap { Locale.Language(identifier: $0) }
         let target = Locale.Language(identifier: targetLang)
 
+        // Pre-check language availability to avoid system download dialog
+        let availability = LanguageAvailability()
+        if let source {
+            let status = await availability.status(from: source, to: target)
+            switch status {
+            case .installed:
+                break
+            case .supported:
+                throw TranslationError.languageNotInstalled(source: sourceLang, target: targetLang)
+            case .unsupported:
+                throw TranslationError.languageUnsupported(source: sourceLang, target: targetLang)
+            @unknown default:
+                break
+            }
+        } else {
+            // Source language unknown — check availability using text content
+            let status = try await availability.status(for: text, to: target)
+            switch status {
+            case .installed:
+                break
+            case .supported:
+                throw TranslationError.languageNotInstalled(source: nil, target: targetLang)
+            case .unsupported:
+                throw TranslationError.languageUnsupported(source: nil, target: targetLang)
+            @unknown default:
+                break
+            }
+        }
+
         return try await withCheckedThrowingContinuation { continuation in
             Task { @MainActor in
                 let config = TranslationSession.Configuration(source: source, target: target)

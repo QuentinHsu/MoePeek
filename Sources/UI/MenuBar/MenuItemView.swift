@@ -1,24 +1,28 @@
+import Defaults
 import KeyboardShortcuts
 import SwiftUI
 
 /// Content for the menu bar dropdown.
 struct MenuItemView: View {
+    @Default(.hasCompletedOnboarding) private var hasCompletedOnboarding
+    @Environment(\.openSettings) private var openSettings
     let appDelegate: AppDelegate
 
-    private var appVersion: String {
-        Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "1.0"
-    }
-
     var body: some View {
-        Text("MoePeek v\(appVersion)")
-
-        Divider()
-
-        Button("显示引导页") {
-            appDelegate.onboardingController?.showWindow()
+        Button("About MoePeek") {
+            Defaults[.selectedSettingsTab] = .about
+            appDelegate.openSettings()
         }
 
         Divider()
+
+        if !hasCompletedOnboarding {
+            Button("显示引导页") {
+                appDelegate.onboardingController?.showWindow()
+            }
+
+            Divider()
+        }
 
         Button("翻译选中文字") {
             guard let coordinator = appDelegate.coordinator,
@@ -46,8 +50,8 @@ struct MenuItemView: View {
 
         Divider()
 
-        SettingsLink {
-            Text("设置...")
+        Button("设置...") {
+            appDelegate.openSettings()
         }
 
         Divider()
@@ -56,5 +60,8 @@ struct MenuItemView: View {
             NSApplication.shared.terminate(nil)
         }
         .keyboardShortcut("q")
+        .onReceive(NotificationCenter.default.publisher(for: .openSettings)) { _ in
+            openSettings()
+        }
     }
 }

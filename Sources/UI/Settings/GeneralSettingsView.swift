@@ -6,6 +6,7 @@ import SwiftUI
 struct GeneralSettingsView: View {
     @Default(.targetLanguage) private var targetLanguage
     @Default(.isAutoDetectEnabled) private var isAutoDetectEnabled
+    @Default(.showInDock) private var showInDock
 
     @State private var launchAtLogin = SMAppService.mainApp.status == .enabled
 
@@ -46,6 +47,14 @@ struct GeneralSettingsView: View {
                             }
                         } catch {
                             launchAtLogin = !newValue // Revert on failure
+                        }
+                    }
+
+                Toggle("在程序坞中显示图标", isOn: $showInDock)
+                    .onChange(of: showInDock) { _, newValue in
+                        NSApp.setActivationPolicy(newValue ? .regular : .accessory)
+                        if !newValue {
+                            NSApp.activate(ignoringOtherApps: true)
                         }
                     }
             }

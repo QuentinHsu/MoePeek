@@ -20,6 +20,9 @@ final class PopupPanelController {
 
         let contentView = PopupView(coordinator: coordinator)
         let hostingView = NSHostingView(rootView: contentView)
+        // Prevent NSHostingView from auto-resizing the window on content changes,
+        // which causes an infinite constraint update loop during streaming.
+        hostingView.sizingOptions = []
 
         // Initial size — will be resized after layout
         let initialSize = CGSize(width: 380, height: 200)

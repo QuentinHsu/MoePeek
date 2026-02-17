@@ -2,6 +2,10 @@ import AppKit
 import Defaults
 import KeyboardShortcuts
 
+extension Notification.Name {
+    static let openSettings = Notification.Name("MoePeek.openSettings")
+}
+
 /// Handles app lifecycle, permission checks, and global shortcut registration.
 @MainActor
 final class AppDelegate: NSObject, NSApplicationDelegate {
@@ -20,16 +24,36 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         selectionMonitor = SelectionMonitor()
         triggerIconController = TriggerIconController()
 
+        // Apply dock visibility — only switch to .regular when needed;
+        // LSUIElement=YES already provides .accessory by default.
+        if Defaults[.showInDock] {
+            NSApp.setActivationPolicy(.regular)
+        }
+
         setupShortcuts()
         setupSelectionMonitor()
 
-        // Show onboarding on first launch; start polling if permissions not fully granted
+        // Show onboarding on first launch; otherwise open Settings directly.
+        // Defer openSettings so SwiftUI MenuBarExtra scene has registered
+        // its @Environment(\.openSettings) listener first.
         if !Defaults[.hasCompletedOnboarding] {
+            onboardingController.onComplete = { [weak self] in
+                self?.openSettings()
+            }
             onboardingController.showWindow()
+        } else {
+            DispatchQueue.main.async { [weak self] in
+                self?.openSettings()
+            }
         }
         if !permissionManager.allPermissionsGranted {
             permissionManager.startPolling()
         }
+    }
+
+    func openSettings() {
+        NSApp.activate(ignoringOtherApps: true)
+        NotificationCenter.default.post(name: .openSettings, object: nil)
     }
 
     private func setupShortcuts() {

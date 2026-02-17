@@ -1,6 +1,14 @@
 import Defaults
 import KeyboardShortcuts
 
+// MARK: - Settings Tab
+
+enum SettingsTab: String, Defaults.Serializable {
+    case general
+    case services
+    case about
+}
+
 // MARK: - Keyboard Shortcuts
 
 extension KeyboardShortcuts.Name {
@@ -31,6 +39,12 @@ extension Defaults.Keys {
     // Auto-detect text selection
     static let isAutoDetectEnabled = Key<Bool>("isAutoDetectEnabled", default: true)
 
+    // Appearance
+    static let showInDock = Key<Bool>("showInDock", default: true)
+
     // Onboarding
     static let hasCompletedOnboarding = Key<Bool>("hasCompletedOnboarding", default: false)
+
+    // Settings tab selection
+    static let selectedSettingsTab = Key<SettingsTab>("selectedSettingsTab", default: .general)
 }

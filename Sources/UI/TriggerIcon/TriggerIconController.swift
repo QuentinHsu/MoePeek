@@ -50,9 +50,10 @@ final class TriggerTrackingView: NSView {
         ctx.strokeEllipse(in: rect)
 
         // SF Symbol icon
-        let config = NSImage.SymbolConfiguration(pointSize: 14, weight: .medium)
+        let sizeConfig = NSImage.SymbolConfiguration(pointSize: 14, weight: .medium)
+        let colorConfig = NSImage.SymbolConfiguration(hierarchicalColor: .labelColor)
         if let image = NSImage(systemSymbolName: "character.bubble", accessibilityDescription: "Translate")?
-            .withSymbolConfiguration(config)
+            .withSymbolConfiguration(sizeConfig.applying(colorConfig))
         {
             let imageSize = image.size
             let imageRect = NSRect(
@@ -61,7 +62,6 @@ final class TriggerTrackingView: NSView {
                 width: imageSize.width,
                 height: imageSize.height
             )
-            NSColor.labelColor.set()
             image.draw(in: imageRect, from: .zero, operation: .sourceOver, fraction: 1.0)
         }
     }
