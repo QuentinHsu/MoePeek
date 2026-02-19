@@ -54,7 +54,8 @@ jobs:
             -scheme MoePeek \
             -configuration Release \
             -archivePath build/MoePeek.xcarchive \
-            CODE_SIGNING_ALLOWED=NO
+            CODE_SIGNING_ALLOWED=NO \
+            STRINGS_FILE_OUTPUT_ENCODING=binary
 
       - name: Prepare app bundle
         run: |
