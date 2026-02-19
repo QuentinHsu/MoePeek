@@ -60,7 +60,9 @@ jobs:
             -configuration Release \
             -archivePath build/MoePeek.xcarchive \
             CODE_SIGNING_ALLOWED=NO \
-            VALIDATE_STRINGS_FILES_WHILE_COPYING=NO
+            VALIDATE_STRINGS_FILES_WHILE_COPYING=NO \
+            MARKETING_VERSION=${{ steps.version.outputs.version }} \
+            CURRENT_PROJECT_VERSION=${{ github.run_number }}
 
       - name: Prepare app bundle
         run: |

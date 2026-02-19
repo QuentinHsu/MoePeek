@@ -23,7 +23,7 @@ struct AboutSettingsView: View {
             Text("Version \(appVersion) (\(buildNumber))")
                 .foregroundStyle(.secondary)
 
-            Text("Copyright © 2025 MoePeek. All rights reserved.")
+            Text("Copyright © 2025-2026 MoePeek. All rights reserved.")
                 .font(.caption)
                 .foregroundStyle(.tertiary)
 

@@ -23,6 +23,10 @@ let project = Project(
             product: .app,
             bundleId: "com.nahida.MoePeek",
             deploymentTargets: .macOS("14.0"),
+            infoPlist: .extendingDefault(with: [
+                "CFBundleShortVersionString": "$(MARKETING_VERSION)",
+                "CFBundleVersion": "$(CURRENT_PROJECT_VERSION)",
+            ]),
             sources: ["Sources/**"],
             resources: ["Resources/**"],
             entitlements: .file(path: "Entitlements/MoePeek.entitlements"),
@@ -35,6 +39,8 @@ let project = Project(
                     "CODE_SIGN_STYLE": "$(MOEPEEK_CODE_SIGN_STYLE)",
                     "CODE_SIGN_IDENTITY": "$(MOEPEEK_CODE_SIGN_IDENTITY)",
                     "DEVELOPMENT_TEAM": "$(MOEPEEK_DEVELOPMENT_TEAM)",
+                    "MARKETING_VERSION": "0.1.0",
+                    "CURRENT_PROJECT_VERSION": "1",
                 ],
                 configurations: [
                     .debug(name: "Debug", xcconfig: "Configurations/Signing.xcconfig"),
