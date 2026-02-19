@@ -165,7 +165,7 @@ final class TriggerIconController {
     }
 
     /// Dismiss silently — used when replacing with a new icon. Does NOT trigger onDismissed.
-    private func dismissSilently() {
+    func dismissSilently() {
         guard let panel else { return }
         cancelAllTimers()
         panel.orderOut(nil)

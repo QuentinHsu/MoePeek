@@ -36,7 +36,7 @@ struct MenuItemView: View {
                   let panelController = appDelegate.panelController else { return }
             Task {
                 await coordinator.ocrAndTranslate()
-                if case .error = coordinator.state {
+                if case .idle = coordinator.phase {
                     // Don't show panel on cancel
                 } else {
                     panelController.showAtCursor()

@@ -1,6 +1,32 @@
 import Defaults
 import KeyboardShortcuts
 
+// MARK: - Supported Languages
+
+/// Languages available for translation UI and provider checks.
+enum SupportedLanguages {
+    /// All supported language codes and display names.
+    static let all: [(code: String, name: String)] = [
+        ("en", "English"),
+        ("zh-Hans", "简体中文"),
+        ("zh-Hant", "繁體中文"),
+        ("ja", "日本語"),
+        ("ko", "한국어"),
+        ("fr", "Français"),
+        ("de", "Deutsch"),
+        ("es", "Español"),
+        ("pt-BR", "Português (Brasil)"),
+        ("ru", "Русский"),
+        ("ar", "العربية"),
+        ("it", "Italiano"),
+        ("th", "ไทย"),
+        ("vi", "Tiếng Việt"),
+    ]
+
+    /// Set of all supported language codes.
+    static let codes: Set<String> = Set(all.map(\.code))
+}
+
 // MARK: - Settings Tab
 
 enum SettingsTab: String, Defaults.Serializable {
@@ -22,16 +48,8 @@ extension Defaults.Keys {
     static let targetLanguage = Key<String>("targetLanguage", default: "zh-Hans")
     static let sourceLanguage = Key<String>("sourceLanguage", default: "auto")
 
-    // OpenAI-compatible API
-    static let openAIBaseURL = Key<String>("openAIBaseURL", default: "https://api.openai.com/v1")
-    static let openAIModel = Key<String>("openAIModel", default: "gpt-4o-mini")
-    static let systemPromptTemplate = Key<String>(
-        "systemPromptTemplate",
-        default: "Translate the following text to {targetLang}. Only output the translation, nothing else."
-    )
-
-    // Translation service
-    static let preferredService = Key<String>("preferredService", default: "openai")
+    // Enabled translation providers
+    static let enabledProviders = Key<Set<String>>("enabledProviders", default: ["openai"])
 
     // Clipboard grabber timeout
     static let clipboardTimeout = Key<Int>("clipboardTimeout", default: 200)
@@ -44,6 +62,10 @@ extension Defaults.Keys {
 
     // Onboarding
     static let hasCompletedOnboarding = Key<Bool>("hasCompletedOnboarding", default: false)
+
+    // Popup panel default size
+    static let popupDefaultWidth = Key<Int>("popupDefaultWidth", default: 450)
+    static let popupDefaultHeight = Key<Int>("popupDefaultHeight", default: 350)
 
     // Settings tab selection
     static let selectedSettingsTab = Key<SettingsTab>("selectedSettingsTab", default: .general)
