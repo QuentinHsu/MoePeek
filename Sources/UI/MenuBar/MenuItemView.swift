@@ -4,52 +4,71 @@ import SwiftUI
 
 /// Content for the menu bar dropdown.
 struct MenuItemView: View {
-    @Environment(\.openSettings) private var openSettings
     let appDelegate: AppDelegate
 
+    private var appVersion: String {
+        Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "?"
+    }
+
     var body: some View {
-        Button("About MoePeek") {
-            Defaults[.selectedSettingsTab] = .about
-            appDelegate.openSettings()
-        }
+        Text("MoePeek \(appVersion)")
+            .font(.headline)
 
         Divider()
 
-        Button("显示引导页") {
-            appDelegate.onboardingController?.showWindow()
+        Button {
+            guard let coordinator = appDelegate.coordinator,
+                  let panelController = appDelegate.panelController else { return }
+            coordinator.prepareInputMode()
+            panelController.showAtScreenCenter()
+        } label: {
+            Label("手动翻译", systemImage: "keyboard")
         }
+        .keyboardShortcut("a", modifiers: .option)
 
-        Divider()
+        Button {
+            guard let coordinator = appDelegate.coordinator,
+                  let panelController = appDelegate.panelController else { return }
+            Task {
+                await coordinator.ocrAndTranslate()
+                if case .idle = coordinator.phase { return }
+                panelController.showAtCursor()
+            }
+        } label: {
+            Label("截图 OCR", systemImage: "text.viewfinder")
+        }
+        .keyboardShortcut("s", modifiers: .option)
 
-        Button("翻译选中文字") {
+        Button {
             guard let coordinator = appDelegate.coordinator,
                   let panelController = appDelegate.panelController else { return }
             Task {
                 await coordinator.translateSelection()
                 panelController.showAtCursor()
             }
+        } label: {
+            Label("选中翻译", systemImage: "text.cursor")
         }
         .keyboardShortcut("d", modifiers: .option)
 
-        Button("OCR 截图翻译") {
+        Button {
             guard let coordinator = appDelegate.coordinator,
                   let panelController = appDelegate.panelController else { return }
-            Task {
-                await coordinator.ocrAndTranslate()
-                if case .idle = coordinator.phase {
-                    // Don't show panel on cancel
-                } else {
-                    panelController.showAtCursor()
-                }
-            }
+            coordinator.translateClipboard()
+            panelController.showAtCursor()
+        } label: {
+            Label("剪贴翻译", systemImage: "doc.on.clipboard")
         }
-        .keyboardShortcut("s", modifiers: .option)
+        .keyboardShortcut("v", modifiers: .option)
 
         Divider()
 
-        Button("设置...") {
+        Button {
             appDelegate.openSettings()
+        } label: {
+            Label("设置...", systemImage: "gearshape")
         }
+        .keyboardShortcut(",")
 
         Divider()
 
@@ -57,8 +76,5 @@ struct MenuItemView: View {
             NSApplication.shared.terminate(nil)
         }
         .keyboardShortcut("q")
-        .onReceive(NotificationCenter.default.publisher(for: .openSettings)) { _ in
-            openSettings()
-        }
     }
 }

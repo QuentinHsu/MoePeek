@@ -32,5 +32,9 @@ struct SourceInputView: View {
                     .foregroundStyle(.quaternary)
             }
         }
+        .task {
+            try? await Task.sleep(for: .milliseconds(100))
+            isFocused = true
+        }
     }
 }

@@ -2,10 +2,6 @@ import AppKit
 import Defaults
 import KeyboardShortcuts
 
-extension Notification.Name {
-    static let openSettings = Notification.Name("MoePeek.openSettings")
-}
-
 /// Handles app lifecycle, permission checks, and global shortcut registration.
 @MainActor
 final class AppDelegate: NSObject, NSApplicationDelegate {
@@ -40,17 +36,13 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         setupSelectionMonitor()
 
         // Show onboarding on first launch; otherwise open Settings directly.
-        // Defer openSettings so SwiftUI MenuBarExtra scene has registered
-        // its @Environment(\.openSettings) listener first.
         if !Defaults[.hasCompletedOnboarding] {
             onboardingController.onComplete = { [weak self] in
                 self?.openSettings()
             }
             onboardingController.showWindow()
         } else {
-            DispatchQueue.main.async { [weak self] in
-                self?.openSettings()
-            }
+            openSettings()
         }
         if !permissionManager.allPermissionsGranted {
             permissionManager.startPolling()
@@ -58,8 +50,12 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     }
 
     func openSettings() {
-        NSApp.activate(ignoringOtherApps: true)
-        NotificationCenter.default.post(name: .openSettings, object: nil)
+        // Workaround: SettingsLink is only available inside SwiftUI views.
+        // showSettingsWindow: is a private AppKit selector; monitor compatibility on macOS upgrades.
+        DispatchQueue.main.async {
+            NSApp.activate(ignoringOtherApps: true)
+            NSApp.sendAction(Selector(("showSettingsWindow:")), to: nil, from: nil)
+        }
     }
 
     // MARK: - Migration
@@ -136,6 +132,22 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             Task { @MainActor in
                 await self.coordinator.ocrAndTranslate()
                 if case .idle = self.coordinator.phase { return }
+                self.panelController.showAtCursor()
+            }
+        }
+
+        KeyboardShortcuts.onKeyUp(for: .inputTranslation) { [weak self] in
+            guard let self else { return }
+            Task { @MainActor in
+                self.coordinator.prepareInputMode()
+                self.panelController.showAtScreenCenter()
+            }
+        }
+
+        KeyboardShortcuts.onKeyUp(for: .clipboardTranslation) { [weak self] in
+            guard let self else { return }
+            Task { @MainActor in
+                self.coordinator.translateClipboard()
                 self.panelController.showAtCursor()
             }
         }

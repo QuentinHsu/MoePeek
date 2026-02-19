@@ -27,6 +27,7 @@ final class TranslationCoordinator {
     private(set) var targetLanguage: String = ""
     private(set) var providerStates: [String: ProviderState] = [:]
     private(set) var globalError: String?
+    private(set) var detectionResult: DetectionResult?
 
     let registry: TranslationProviderRegistry
     private let permissionManager: PermissionManager
@@ -76,6 +77,30 @@ final class TranslationCoordinator {
         }
     }
 
+    /// Read clipboard text and translate directly.
+    func translateClipboard() {
+        guard let text = NSPasteboard.general.string(forType: .string),
+              !text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
+            phase = .active
+            sourceText = ""
+            globalError = "剪贴板为空，请先复制一些文字。"
+            return
+        }
+        translate(text)
+    }
+
+    /// Reset state and enter input mode (empty source input for manual typing).
+    func prepareInputMode() {
+        cancelAll()
+        globalError = nil
+        sourceText = ""
+        detectedLanguage = nil
+        targetLanguage = Defaults[.targetLanguage]
+        providerStates = [:]
+        detectionResult = nil
+        phase = .active
+    }
+
     /// Translate text with all enabled providers in parallel.
     /// Launches provider tasks in the background and returns immediately.
     func translate(_ text: String) {
@@ -91,7 +116,26 @@ final class TranslationCoordinator {
         globalError = nil
 
         sourceText = trimmed
-        detectedLanguage = LanguageDetector.detect(trimmed)
+
+        // Language detection: respect user settings
+        let isDetectionEnabled = Defaults[.isLanguageDetectionEnabled]
+        let forcedSource = Defaults[.sourceLanguage]
+
+        if !isDetectionEnabled, forcedSource != "auto" {
+            // User disabled auto-detection and specified a source language
+            detectedLanguage = forcedSource
+            detectionResult = nil
+        } else {
+            // Auto-detect with configurable threshold and hints
+            let threshold = Defaults[.detectionConfidenceThreshold]
+            let hints = buildLanguageHints()
+            let result = LanguageDetector.detectWithConfidence(
+                trimmed, threshold: threshold, preferredSourceHints: hints
+            )
+            detectionResult = result
+            detectedLanguage = result.language
+        }
+
         targetLanguage = resolveTargetLanguage(detected: detectedLanguage)
         phase = .active
 
@@ -138,6 +182,7 @@ final class TranslationCoordinator {
         targetLanguage = ""
         providerStates = [:]
         globalError = nil
+        detectionResult = nil
     }
 
     // MARK: - Computed Helpers
@@ -202,6 +247,31 @@ final class TranslationCoordinator {
             task.cancel()
         }
         activeTasks.removeAll()
+    }
+
+    /// Build language hints (BCP 47 codes) based on user's target/source language preferences.
+    /// TODO: Expand coverage beyond zh↔en to other common language pairs (ja, ko, fr, de, etc.)
+    private func buildLanguageHints() -> [String: Double]? {
+        let target = Defaults[.targetLanguage]
+        let source = Defaults[.sourceLanguage]
+
+        var hints: [String: Double] = [:]
+
+        // If user specified a preferred source language, give it a boost
+        if source != "auto" {
+            hints[source] = 0.5
+        }
+
+        // Infer likely source languages from target language
+        if target.hasPrefix("zh") {
+            hints["en", default: 0] += 0.2
+            hints["ja", default: 0] += 0.1
+        } else if target == "en" {
+            hints["zh-Hans", default: 0] += 0.2
+            hints["ja", default: 0] += 0.1
+        }
+
+        return hints.isEmpty ? nil : hints
     }
 
     private func resolveTargetLanguage(detected: String?) -> String {

@@ -20,7 +20,8 @@ jobs:
       - name: Install tools
         run: |
           brew install create-dmg
-          curl -Ls https://install.tuist.io | bash
+          brew tap tuist/tuist
+          brew install --formula tuist
           tuist version
 
       - name: Write unsigned Signing.xcconfig

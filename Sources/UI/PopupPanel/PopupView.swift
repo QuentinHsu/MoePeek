@@ -78,6 +78,7 @@ struct PopupView: View {
                 HStack(spacing: 4) {
                     LanguageBarView(
                         detectedLanguage: coordinator.detectedLanguage,
+                        detectionConfidence: coordinator.detectionResult?.confidence,
                         targetLanguage: $targetLang,
                         onSwap: {
                             if let detected = coordinator.detectedLanguage {
@@ -86,16 +87,16 @@ struct PopupView: View {
                         }
                     )
 
-                    Button {
-                        NSApp.activate(ignoringOtherApps: true)
-                        NotificationCenter.default.post(name: .openSettings, object: nil)
-                    } label: {
+                    SettingsLink {
                         Image(systemName: "gearshape")
                             .font(.caption)
                             .foregroundStyle(.secondary)
                     }
                     .buttonStyle(.plain)
                     .help("打开设置")
+                    .simultaneousGesture(TapGesture().onEnded {
+                        NSApp.activate(ignoringOtherApps: true)
+                    })
                 }
                 .padding(.horizontal, 10)
                 .padding(.vertical, 4)

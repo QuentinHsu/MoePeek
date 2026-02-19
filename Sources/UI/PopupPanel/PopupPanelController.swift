@@ -17,30 +17,10 @@ final class PopupPanelController {
     }
 
     func showAtCursor() {
-        let cursorPos = NSEvent.mouseLocation
-
-        // Read default size from user preferences
-        let initialSize = CGSize(
-            width: CGFloat(Defaults[.popupDefaultWidth]),
-            height: CGFloat(Defaults[.popupDefaultHeight])
-        )
-
-        if panel == nil {
-            panel = PopupPanel(contentRect: NSRect(origin: .zero, size: initialSize))
-        }
-
+        let initialSize = setupPanel()
         guard let panel else { return }
 
-        let contentView = PopupView(coordinator: coordinator)
-            .environment(\.popupPanel, panel)
-        let hostingView = NSHostingView(rootView: contentView)
-        // Prevent NSHostingView from auto-resizing the window on content changes,
-        // which causes an infinite constraint update loop during streaming.
-        hostingView.sizingOptions = []
-
-        panel.contentView = hostingView
-
-        // Position near cursor, adjusted for screen bounds
+        let cursorPos = NSEvent.mouseLocation
         let screen = NSScreen.screens.first(where: { $0.frame.contains(cursorPos) }) ?? NSScreen.main ?? NSScreen.screens[0]
         let frame = PopupPositioning.panelFrame(
             contentSize: initialSize,
@@ -50,12 +30,24 @@ final class PopupPanelController {
         panel.setFrame(frame, display: true)
         panel.orderFront(nil)
 
-        // Start monitoring for dismiss events
-        dismissMonitor = PopupDismissMonitor(panel: panel) { [weak self] in
-            self?.dismiss()
-        }
-        dismissMonitor?.start()
+        startDismissMonitor()
+    }
 
+    func showAtScreenCenter() {
+        let initialSize = setupPanel()
+        guard let panel else { return }
+
+        let cursorPos = NSEvent.mouseLocation
+        let screen = NSScreen.screens.first(where: { $0.frame.contains(cursorPos) }) ?? NSScreen.main ?? NSScreen.screens[0]
+        let visibleFrame = screen.visibleFrame
+        let origin = NSPoint(
+            x: visibleFrame.midX - initialSize.width / 2,
+            y: visibleFrame.midY - initialSize.height / 2
+        )
+        panel.setFrame(NSRect(origin: origin, size: initialSize), display: true)
+        panel.makeKeyAndOrderFront(nil)
+
+        startDismissMonitor()
     }
 
     func dismiss() {
@@ -63,11 +55,44 @@ final class PopupPanelController {
         dismissMonitor = nil
         panel?.contentView = nil
         panel?.orderOut(nil)
+        panel = nil
         coordinator.dismiss()
         onDismiss?()
     }
 
     var isVisible: Bool {
         panel?.isVisible ?? false
+    }
+
+    // MARK: - Private
+
+    @discardableResult
+    private func setupPanel() -> CGSize {
+        let initialSize = CGSize(
+            width: CGFloat(Defaults[.popupDefaultWidth]),
+            height: CGFloat(Defaults[.popupDefaultHeight])
+        )
+
+        if panel == nil {
+            let newPanel = PopupPanel(contentRect: NSRect(origin: .zero, size: initialSize))
+            let contentView = PopupView(coordinator: coordinator)
+                .environment(\.popupPanel, newPanel)
+            let hostingView = NSHostingView(rootView: contentView)
+            // Prevent NSHostingView from auto-resizing the window on content changes,
+            // which causes an infinite constraint update loop during streaming.
+            hostingView.sizingOptions = []
+            newPanel.contentView = hostingView
+            panel = newPanel
+        }
+
+        return initialSize
+    }
+
+    private func startDismissMonitor() {
+        guard let panel else { return }
+        dismissMonitor = PopupDismissMonitor(panel: panel) { [weak self] in
+            self?.dismiss()
+        }
+        dismissMonitor?.start()
     }
 }

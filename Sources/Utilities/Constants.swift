@@ -40,6 +40,8 @@ enum SettingsTab: String, Defaults.Serializable {
 extension KeyboardShortcuts.Name {
     static let translateSelection = Self("translateSelection", default: .init(.d, modifiers: .option))
     static let ocrScreenshot = Self("ocrScreenshot", default: .init(.s, modifiers: .option))
+    static let inputTranslation = Self("inputTranslation", default: .init(.a, modifiers: .option))
+    static let clipboardTranslation = Self("clipboardTranslation", default: .init(.v, modifiers: .option))
 }
 
 // MARK: - User Defaults Keys
@@ -50,6 +52,10 @@ extension Defaults.Keys {
 
     // Enabled translation providers
     static let enabledProviders = Key<Set<String>>("enabledProviders", default: ["openai"])
+
+    // Language detection
+    static let detectionConfidenceThreshold = Key<Double>("detectionConfidenceThreshold", default: 0.3)
+    static let isLanguageDetectionEnabled = Key<Bool>("isLanguageDetectionEnabled", default: true)
 
     // Clipboard grabber timeout
     static let clipboardTimeout = Key<Int>("clipboardTimeout", default: 200)

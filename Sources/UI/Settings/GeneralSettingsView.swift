@@ -9,30 +9,24 @@ struct GeneralSettingsView: View {
     @Default(.showInDock) private var showInDock
     @Default(.popupDefaultWidth) private var popupDefaultWidth
     @Default(.popupDefaultHeight) private var popupDefaultHeight
+    @Default(.sourceLanguage) private var sourceLanguage
+    @Default(.isLanguageDetectionEnabled) private var isLanguageDetectionEnabled
+    @Default(.detectionConfidenceThreshold) private var confidenceThreshold
 
     @State private var launchAtLogin = SMAppService.mainApp.status == .enabled
 
-    private let languages = [
-        ("zh-Hans", "Simplified Chinese"),
-        ("zh-Hant", "Traditional Chinese"),
-        ("en", "English"),
-        ("ja", "Japanese"),
-        ("ko", "Korean"),
-        ("fr", "French"),
-        ("de", "German"),
-        ("es", "Spanish"),
-    ]
-
     var body: some View {
         Form {
-            Section("Keyboard Shortcuts") {
-                KeyboardShortcuts.Recorder("Translate Selection:", name: .translateSelection)
-                KeyboardShortcuts.Recorder("OCR Screenshot:", name: .ocrScreenshot)
+            Section("快捷键") {
+                KeyboardShortcuts.Recorder("选中翻译:", name: .translateSelection)
+                KeyboardShortcuts.Recorder("截图 OCR:", name: .ocrScreenshot)
+                KeyboardShortcuts.Recorder("手动翻译:", name: .inputTranslation)
+                KeyboardShortcuts.Recorder("剪贴翻译:", name: .clipboardTranslation)
             }
 
-            Section("General") {
-                Picker("Target Language:", selection: $targetLanguage) {
-                    ForEach(languages, id: \.0) { code, name in
+            Section("通用") {
+                Picker("目标语言:", selection: $targetLanguage) {
+                    ForEach(SupportedLanguages.all, id: \.code) { code, name in
                         Text(name).tag(code)
                     }
                 }
@@ -59,6 +53,37 @@ struct GeneralSettingsView: View {
                             NSApp.activate(ignoringOtherApps: true)
                         }
                     }
+            }
+
+            Section("语言检测") {
+                Toggle("自动检测源语言", isOn: $isLanguageDetectionEnabled)
+                    .onChange(of: isLanguageDetectionEnabled) { _, newValue in
+                        if !newValue, sourceLanguage == "auto" {
+                            sourceLanguage = Defaults[.targetLanguage].hasPrefix("zh") ? "en" : "zh-Hans"
+                        }
+                    }
+
+                if isLanguageDetectionEnabled {
+                    Picker("偏好源语言:", selection: $sourceLanguage) {
+                        Text("无偏好").tag("auto")
+                        ForEach(SupportedLanguages.all, id: \.code) { code, name in
+                            Text(name).tag(code)
+                        }
+                    }
+
+                    LabeledContent("检测灵敏度: \(confidenceThreshold, specifier: "%.1f")") {
+                        Slider(value: $confidenceThreshold, in: 0.1...0.8, step: 0.1)
+                    }
+                    Text("较低 = 更积极检测（可能不准）；较高 = 更保守（可能返回未知）")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                } else {
+                    Picker("源语言:", selection: $sourceLanguage) {
+                        ForEach(SupportedLanguages.all, id: \.code) { code, name in
+                            Text(name).tag(code)
+                        }
+                    }
+                }
             }
 
             Section("弹出面板") {
