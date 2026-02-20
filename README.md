@@ -41,19 +41,6 @@
 
 Download the latest `.dmg` or `.zip` from [GitHub Releases](https://github.com/yusixian/MoePeek/releases) and drag `MoePeek.app` into `/Applications`.
 
-### "MoePeek.app is damaged and can't be opened"
-
-The app is not notarized with Apple, so macOS Gatekeeper may block it. This does not mean the file is corrupted. To fix:
-
-1. Open **Terminal**
-2. Run:
-
-```bash
-sudo xattr -r -d com.apple.quarantine /Applications/MoePeek.app
-```
-
-Then launch the app as usual.
-
 ## Usage
 
 On first launch, MoePeek walks you through an onboarding flow to grant the required permissions:
@@ -71,6 +58,31 @@ On first launch, MoePeek walks you through an onboarding flow to grant the requi
 | Clipboard Translation | `⌥ V` |
 
 All shortcuts can be customized in **Settings → General**.
+
+## FAQ
+
+### "MoePeek.app is damaged and can't be opened"
+
+The app is not notarized with Apple, so macOS Gatekeeper may block it. This does not mean the file is corrupted. To fix:
+
+1. Open **Terminal**
+2. Run:
+
+```bash
+sudo xattr -r -d com.apple.quarantine /Applications/MoePeek.app
+```
+
+Then launch the app as usual.
+
+### Onboarding screen doesn't appear / want to re-trigger onboarding
+
+Reset all user preferences to restore the first-launch state:
+
+```bash
+defaults delete com.nahida.MoePeek
+```
+
+Then relaunch the app.
 
 ## Acknowledgements
 

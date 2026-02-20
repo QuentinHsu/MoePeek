@@ -41,19 +41,6 @@
 
 从 [GitHub Releases](https://github.com/yusixian/MoePeek/releases) 下载最新的 `.dmg` 或 `.zip`，将 `MoePeek.app` 拖入 `/Applications`。
 
-### macOS 提示"已损坏，无法打开"
-
-由于应用未经 Apple 公证，macOS Gatekeeper 可能会拦截。这并非文件损坏，而是系统安全机制。解决方法：
-
-1. 打开**终端**（Terminal）
-2. 执行：
-
-```bash
-sudo xattr -r -d com.apple.quarantine /Applications/MoePeek.app
-```
-
-之后即可正常打开。
-
 ## 使用
 
 首次启动时，MoePeek 会引导你完成权限设置：
@@ -71,6 +58,31 @@ sudo xattr -r -d com.apple.quarantine /Applications/MoePeek.app
 | 剪贴板翻译 | `⌥ V` |
 
 所有快捷键均可在**设置 → 通用**中自定义。
+
+## 常见问题
+
+### macOS 提示"已损坏，无法打开"
+
+由于应用未经 Apple 公证，macOS Gatekeeper 可能会拦截。这并非文件损坏，而是系统安全机制。解决方法：
+
+1. 打开**终端**（Terminal）
+2. 执行：
+
+```bash
+sudo xattr -r -d com.apple.quarantine /Applications/MoePeek.app
+```
+
+之后即可正常打开。
+
+### 引导页未显示 / 想重新触发引导流程
+
+重置所有用户偏好设置，恢复到首次启动状态：
+
+```bash
+defaults delete com.nahida.MoePeek
+```
+
+重新打开应用即可。
 
 ## 致谢
 
