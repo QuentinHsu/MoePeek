@@ -14,10 +14,12 @@ enum AppleScriptGrabber {
             end tell
             """
 
-        guard let appleScript = NSAppleScript(source: script) else { return nil }
-
         return await withCheckedContinuation { continuation in
             DispatchQueue.global(qos: .userInitiated).async {
+                guard let appleScript = NSAppleScript(source: script) else {
+                    continuation.resume(returning: nil)
+                    return
+                }
                 var error: NSDictionary?
                 let result = appleScript.executeAndReturnError(&error)
 

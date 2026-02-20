@@ -2,7 +2,7 @@ import Foundation
 import SwiftUI
 
 #if canImport(Translation)
-import Translation
+@preconcurrency import Translation
 
 /// Apple Translation framework provider — macOS 15.0+ only.
 @available(macOS 15.0, *)

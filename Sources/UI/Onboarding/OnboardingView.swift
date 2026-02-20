@@ -1,70 +1,543 @@
 import Defaults
 import SwiftUI
 
-/// First-launch onboarding view showing permission status and setup guidance.
+#if canImport(Translation)
+@preconcurrency import Translation
+#endif
+
+/// Step-by-step onboarding view guiding users through required permissions and translation service setup.
 struct OnboardingView: View {
     let permissionManager: PermissionManager
+    let registry: TranslationProviderRegistry
     var onComplete: () -> Void
+
+    @Default(.enabledProviders) private var enabledProviders
+    @State private var currentPageIndex = 0
+    @State private var apiKey: String = ""
+
+    private enum Page: Equatable {
+        case welcome, accessibility, screenRecording
+        case providerSelection, openaiSetup, appleTranslation
+    }
+
+    private var pages: [Page] {
+        var result: [Page] = [.welcome, .accessibility, .screenRecording, .providerSelection]
+        if enabledProviders.contains("openai") {
+            result.append(.openaiSetup)
+        }
+        #if canImport(Translation)
+        if #available(macOS 15.0, *),
+           registry.providers.contains(where: { $0.id == "apple" }),
+           enabledProviders.contains("apple") {
+            result.append(.appleTranslation)
+        }
+        #endif
+        return result
+    }
+
+    private var currentPage: Page {
+        guard currentPageIndex < pages.count else { return pages.last ?? .welcome }
+        return pages[currentPageIndex]
+    }
 
     var body: some View {
         VStack(spacing: 0) {
-            // Header
-            VStack(spacing: 8) {
-                Image(nsImage: NSApp.applicationIconImage)
-                    .resizable()
-                    .frame(width: 64, height: 64)
-
-                Text("MoePeek")
-                    .font(.title.bold())
-
-                Text("菜单栏翻译工具，需要以下权限才能正常工作")
-                    .font(.subheadline)
-                    .foregroundStyle(.secondary)
+            // Step content
+            Group {
+                switch currentPage {
+                case .welcome:
+                    welcomeStep
+                case .accessibility:
+                    accessibilityStep
+                case .screenRecording:
+                    screenRecordingStep
+                case .providerSelection:
+                    providerSelectionStep
+                case .openaiSetup:
+                    openaiSetupStep
+                case .appleTranslation:
+                    appleTranslationStep
+                }
             }
-            .padding(.top, 24)
-            .padding(.bottom, 20)
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .transition(.push(from: currentPageIndex > 0 ? .trailing : .leading))
 
-            // Permission cards
-            VStack(spacing: 8) {
-                PermissionCardView(
-                    icon: "hand.raised",
-                    title: "辅助功能",
-                    description: "用于读取选中文本",
-                    isGranted: permissionManager.isAccessibilityGranted,
-                    onOpenSettings: { permissionManager.openAccessibilitySettings() }
-                )
+            Divider()
 
-                PermissionCardView(
-                    icon: "rectangle.dashed.badge.record",
-                    title: "屏幕录制",
-                    description: "用于 OCR 截图翻译",
-                    isGranted: permissionManager.isScreenRecordingGranted,
-                    onOpenSettings: { permissionManager.openScreenRecordingSettings() }
+            // Navigation buttons
+            HStack {
+                if currentPageIndex > 0 {
+                    Button("上一步") {
+                        withAnimation(.easeInOut(duration: 0.3)) {
+                            currentPageIndex -= 1
+                        }
+                    }
+                }
+
+                Spacer()
+
+                navigationButtons
+            }
+            .padding(.horizontal, 24)
+            .padding(.vertical, 16)
+        }
+        .frame(width: 380, height: 480)
+    }
+
+    // MARK: - Navigation Buttons
+
+    @ViewBuilder
+    private var navigationButtons: some View {
+        let isLast = currentPageIndex >= pages.count - 1
+
+        switch currentPage {
+        case .welcome:
+            Button {
+                withAnimation(.easeInOut(duration: 0.3)) {
+                    currentPageIndex = 1
+                }
+            } label: {
+                Text("开始设置")
+            }
+            .buttonStyle(.borderedProminent)
+            .controlSize(.large)
+
+        case .accessibility:
+            nextStepButton(
+                title: "下一步",
+                isHighlighted: permissionManager.isAccessibilityGranted,
+                action: goNext
+            )
+
+        case .screenRecording:
+            nextStepButton(
+                title: "下一步",
+                isHighlighted: permissionManager.isScreenRecordingGranted,
+                action: goNext
+            )
+
+        case .providerSelection:
+            nextStepButton(
+                title: "下一步",
+                isHighlighted: !enabledProviders.isEmpty,
+                action: goNext
+            )
+
+        case .openaiSetup:
+            HStack(spacing: 12) {
+                Button("跳过") { goNext() }
+                    .controlSize(.large)
+                nextStepButton(
+                    title: isLast ? "开始使用" : "下一步",
+                    isHighlighted: !apiKey.isEmpty,
+                    action: goNext
                 )
+            }
+
+        case .appleTranslation:
+            HStack(spacing: 12) {
+                Button("跳过") { goNext() }
+                    .controlSize(.large)
+                nextStepButton(
+                    title: "开始使用",
+                    isHighlighted: true,
+                    action: goNext
+                )
+            }
+        }
+    }
+
+    private func goNext() {
+        let nextIndex = currentPageIndex + 1
+        if nextIndex < pages.count {
+            withAnimation(.easeInOut(duration: 0.3)) {
+                currentPageIndex = nextIndex
+            }
+        } else {
+            Defaults[.hasCompletedOnboarding] = true
+            onComplete()
+        }
+    }
+
+    // MARK: - Steps
+
+    private var welcomeStep: some View {
+        VStack(spacing: 12) {
+            Spacer()
+
+            Image(nsImage: NSApp.applicationIconImage)
+                .resizable()
+                .frame(width: 80, height: 80)
+
+            Text("MoePeek")
+                .font(.title.bold())
+
+            Text("菜单栏翻译工具")
+                .font(.headline)
+                .foregroundStyle(.secondary)
+
+            Text("需要以下权限才能正常工作，\n接下来将引导你逐步完成设置。")
+                .font(.subheadline)
+                .foregroundStyle(.tertiary)
+                .multilineTextAlignment(.center)
+
+            Spacer()
+        }
+        .padding(.horizontal, 24)
+    }
+
+    private var accessibilityStep: some View {
+        permissionStep(
+            icon: "hand.raised",
+            title: "辅助功能权限",
+            description: "MoePeek 需要辅助功能权限来读取你选中的文本，这是划词翻译的核心功能。",
+            isGranted: permissionManager.isAccessibilityGranted,
+            onOpenSettings: { permissionManager.openAccessibilitySettings() }
+        )
+    }
+
+    private var screenRecordingStep: some View {
+        permissionStep(
+            icon: "rectangle.dashed.badge.record",
+            title: "屏幕录制权限",
+            description: "MoePeek 需要屏幕录制权限来进行 OCR 截图翻译，识别屏幕上的文字。",
+            isGranted: permissionManager.isScreenRecordingGranted,
+            onOpenSettings: { permissionManager.openScreenRecordingSettings() }
+        )
+    }
+
+    // MARK: - Provider Selection Step
+
+    private var providerSelectionStep: some View {
+        VStack(spacing: 16) {
+            Spacer()
+
+            Image(systemName: "globe")
+                .font(.system(size: 40))
+                .foregroundStyle(.blue)
+
+            Text("选择翻译服务")
+                .font(.title2.bold())
+
+            Text("至少启用一个翻译服务才能使用翻译功能。\n你可以同时启用多个服务进行对比。")
+                .font(.subheadline)
+                .foregroundStyle(.secondary)
+                .multilineTextAlignment(.center)
+                .padding(.horizontal, 24)
+
+            VStack(spacing: 10) {
+                ForEach(registry.providers, id: \.id) { provider in
+                    providerToggleRow(provider)
+                }
             }
             .padding(.horizontal, 24)
 
+            if enabledProviders.isEmpty {
+                Text("请至少选择一个翻译服务")
+                    .font(.caption)
+                    .foregroundStyle(.red)
+            }
+
+            Spacer()
+        }
+    }
+
+    private func providerToggleRow(_ provider: any TranslationProvider) -> some View {
+        let isEnabled = enabledProviders.contains(provider.id)
+        return Button {
+            var current = enabledProviders
+            if current.contains(provider.id) {
+                current.remove(provider.id)
+            } else {
+                current.insert(provider.id)
+            }
+            enabledProviders = current
+        } label: {
+            HStack(spacing: 12) {
+                Image(systemName: provider.iconSystemName)
+                    .font(.title3)
+                    .frame(width: 28)
+                    .foregroundStyle(isEnabled ? .blue : .secondary)
+
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(provider.displayName)
+                        .font(.headline)
+                    Text(providerDescription(for: provider.id))
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
+
+                Spacer()
+
+                Image(systemName: isEnabled ? "checkmark.circle.fill" : "circle")
+                    .font(.title3)
+                    .foregroundStyle(isEnabled ? .blue : .secondary)
+            }
+            .padding(.horizontal, 12)
+            .padding(.vertical, 10)
+            .background(
+                RoundedRectangle(cornerRadius: 8)
+                    .fill(isEnabled ? Color.blue.opacity(0.08) : Color.secondary.opacity(0.05))
+            )
+            .overlay(
+                RoundedRectangle(cornerRadius: 8)
+                    .stroke(isEnabled ? Color.blue.opacity(0.3) : Color.clear, lineWidth: 1)
+            )
+        }
+        .buttonStyle(.plain)
+    }
+
+    private func providerDescription(for id: String) -> String {
+        switch id {
+        case "openai": "OpenAI 兼容 API，需要配置 API Key"
+        case "apple": "系统内置翻译，无需 API Key（macOS 15+）"
+        default: ""
+        }
+    }
+
+    // MARK: - OpenAI Setup Step
+
+    private var openaiSetupStep: some View {
+        VStack(spacing: 16) {
             Spacer()
 
-            // Footer
-            VStack(spacing: 12) {
-                Text("授权后状态会自动更新，无需重启应用")
-                    .font(.caption)
-                    .foregroundStyle(.tertiary)
+            Image(systemName: "key")
+                .font(.system(size: 40))
+                .foregroundStyle(.orange)
 
-                Button {
-                    Defaults[.hasCompletedOnboarding] = true
-                    onComplete()
-                } label: {
-                    Text("开始使用")
-                        .frame(maxWidth: .infinity)
+            Text("配置 OpenAI API")
+                .font(.title2.bold())
+
+            Text("输入你的 API Key 以使用 OpenAI 翻译服务。\n你也可以稍后在设置中配置。")
+                .font(.subheadline)
+                .foregroundStyle(.secondary)
+                .multilineTextAlignment(.center)
+                .padding(.horizontal, 24)
+
+            VStack(alignment: .leading, spacing: 8) {
+                Text("API Key")
+                    .font(.subheadline.bold())
+
+                SecureField("sk-...", text: $apiKey)
+                    .textFieldStyle(.roundedBorder)
+                    .onChange(of: apiKey) { _, newValue in
+                        let keychainKey = "provider.openai.apiKey"
+                        if newValue.isEmpty {
+                            KeychainHelper.delete(key: keychainKey)
+                        } else {
+                            KeychainHelper.save(key: keychainKey, value: newValue)
+                        }
+                    }
+            }
+            .padding(.horizontal, 32)
+
+            Spacer()
+        }
+        .onAppear {
+            apiKey = KeychainHelper.load(key: "provider.openai.apiKey") ?? ""
+        }
+    }
+
+    // MARK: - Apple Translation Step
+
+    @ViewBuilder
+    private var appleTranslationStep: some View {
+        #if canImport(Translation)
+        if #available(macOS 15.0, *) {
+            appleTranslationContent
+        } else {
+            EmptyView()
+        }
+        #else
+        EmptyView()
+        #endif
+    }
+
+    #if canImport(Translation)
+    @available(macOS 15.0, *)
+    private var appleTranslationContent: some View {
+        VStack(spacing: 16) {
+            Spacer()
+
+            Image(systemName: "apple.logo")
+                .font(.system(size: 40))
+                .foregroundStyle(.blue)
+
+            Text("Apple Translation 语言包")
+                .font(.title2.bold())
+
+            Text("Apple Translation 需要下载语言包才能离线翻译。\n选择常用语言对并下载，或稍后在设置中下载。")
+                .font(.subheadline)
+                .foregroundStyle(.secondary)
+                .multilineTextAlignment(.center)
+                .padding(.horizontal, 24)
+
+            OnboardingLanguageDownloadView()
+                .padding(.horizontal, 24)
+
+            Spacer()
+        }
+    }
+    #endif
+
+    // MARK: - Helpers
+
+    @ViewBuilder
+    private func nextStepButton(
+        title: String,
+        isHighlighted: Bool,
+        action: @escaping () -> Void
+    ) -> some View {
+        if isHighlighted {
+            Button(action: action) { Text(title) }
+                .buttonStyle(.borderedProminent)
+                .controlSize(.large)
+        } else {
+            Button(action: action) { Text(title) }
+                .buttonStyle(.bordered)
+                .controlSize(.large)
+        }
+    }
+
+    // MARK: - Shared Permission Step Layout
+
+    private func permissionStep(
+        icon: String,
+        title: String,
+        description: String,
+        isGranted: Bool,
+        onOpenSettings: @escaping () -> Void
+    ) -> some View {
+        VStack(spacing: 16) {
+            Spacer()
+
+            Image(systemName: icon)
+                .font(.system(size: 40))
+                .foregroundStyle(isGranted ? .green : .secondary)
+
+            Text(title)
+                .font(.title2.bold())
+
+            Text(description)
+                .font(.subheadline)
+                .foregroundStyle(.secondary)
+                .multilineTextAlignment(.center)
+                .padding(.horizontal, 24)
+
+            if isGranted {
+                Label("已授权", systemImage: "checkmark.circle.fill")
+                    .font(.headline)
+                    .foregroundStyle(.green)
+                    .transition(.scale.combined(with: .opacity))
+            } else {
+                Button("打开系统设置") {
+                    onOpenSettings()
                 }
                 .controlSize(.large)
-                .buttonStyle(.borderedProminent)
-                .padding(.horizontal, 24)
             }
-            .padding(.bottom, 24)
+
+            Text("授权后状态会自动更新")
+                .font(.caption)
+                .foregroundStyle(.tertiary)
+
+            Spacer()
         }
-        .frame(width: 380, height: 400)
+        .animation(.easeInOut(duration: 0.3), value: isGranted)
     }
 }
+
+// MARK: - Onboarding Language Download View
+
+#if canImport(Translation)
+@available(macOS 15.0, *)
+private struct OnboardingLanguageDownloadView: View {
+    private enum PairStatus {
+        case checking, installed, needsDownload, unsupported, unknown
+
+        var label: String {
+            switch self {
+            case .checking: "检查中…"
+            case .installed: "已安装"
+            case .needsDownload: "需要下载"
+            case .unsupported: "不支持"
+            case .unknown: "未知"
+            }
+        }
+
+        var color: Color {
+            self == .installed ? .green : .secondary
+        }
+    }
+
+    @State private var selectedSource = "en"
+    @State private var selectedTarget = "zh-Hans"
+    @State private var pairStatus: PairStatus?
+    @State private var downloadConfiguration: TranslationSession.Configuration?
+
+    private var selectionId: String { "\(selectedSource)-\(selectedTarget)" }
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            HStack(spacing: 8) {
+                Picker("源语言", selection: $selectedSource) {
+                    ForEach(SupportedLanguages.all, id: \.code) { code, name in
+                        Text(name).tag(code)
+                    }
+                }
+                .labelsHidden()
+
+                Image(systemName: "arrow.right")
+                    .foregroundStyle(.secondary)
+
+                Picker("目标语言", selection: $selectedTarget) {
+                    ForEach(SupportedLanguages.all, id: \.code) { code, name in
+                        Text(name).tag(code)
+                    }
+                }
+                .labelsHidden()
+            }
+
+            HStack(spacing: 8) {
+                Button("检查并下载") {
+                    downloadConfiguration = .init(
+                        source: Locale.Language(identifier: selectedSource),
+                        target: Locale.Language(identifier: selectedTarget)
+                    )
+                }
+                .controlSize(.small)
+
+                if let pairStatus {
+                    Label(pairStatus.label, systemImage: pairStatus == .installed ? "checkmark.circle.fill" : "info.circle")
+                        .font(.callout)
+                        .foregroundStyle(pairStatus.color)
+                }
+            }
+        }
+        .task(id: selectionId) {
+            pairStatus = .checking
+            let availability = LanguageAvailability()
+            let source = Locale.Language(identifier: selectedSource)
+            let target = Locale.Language(identifier: selectedTarget)
+            let status = await availability.status(from: source, to: target)
+            pairStatus = switch status {
+            case .installed: .installed
+            case .supported: .needsDownload
+            case .unsupported: .unsupported
+            @unknown default: .unknown
+            }
+        }
+        .translationTask(downloadConfiguration) { session in
+            do {
+                try await session.prepareTranslation()
+                pairStatus = .installed
+            } catch {
+                let availability = LanguageAvailability()
+                let source = Locale.Language(identifier: selectedSource)
+                let target = Locale.Language(identifier: selectedTarget)
+                let status = await availability.status(from: source, to: target)
+                pairStatus = status == .installed ? .installed : .needsDownload
+            }
+        }
+    }
+}
+#endif

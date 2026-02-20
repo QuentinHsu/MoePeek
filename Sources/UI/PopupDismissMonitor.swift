@@ -6,10 +6,10 @@ final class PopupDismissMonitor {
     private let panel: NSPanel
     private let onDismiss: @MainActor () -> Void
 
-    private var globalClickMonitor: Any?
-    private var globalKeyMonitor: Any?
-    private var localClickMonitor: Any?
-    private var localKeyMonitor: Any?
+    nonisolated(unsafe) private var globalClickMonitor: Any?
+    nonisolated(unsafe) private var globalKeyMonitor: Any?
+    nonisolated(unsafe) private var localClickMonitor: Any?
+    nonisolated(unsafe) private var localKeyMonitor: Any?
 
     init(panel: NSPanel, onDismiss: @escaping @MainActor () -> Void) {
         self.panel = panel

@@ -16,8 +16,8 @@ enum LanguageDetector {
 
     // Base language weight hints (inspired by Easydict, simplified)
     private static let baseHints: [NLLanguage: Double] = [
-        .english: 1.5,
-        .simplifiedChinese: 1.2,
+        .english: 2.0,
+        .simplifiedChinese: 1.5,
         .traditionalChinese: 0.8,
         .japanese: 0.6,
         .korean: 0.5,

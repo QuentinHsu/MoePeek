@@ -9,11 +9,11 @@ final class SelectionMonitor {
     var onTextSelected: ((String, CGPoint) -> Void)?
     var onMouseDown: ((CGPoint) -> Void)?
 
-    private var globalMonitor: Any?
-    private var mouseDownMonitor: Any?
+    nonisolated(unsafe) private var globalMonitor: Any?
+    nonisolated(unsafe) private var mouseDownMonitor: Any?
     private var mouseDownPoint: CGPoint?
     private var isSuppressed = false
-    private var suppressTask: Task<Void, Never>?
+    nonisolated(unsafe) private var suppressTask: Task<Void, Never>?
 
     deinit {
         if let monitor = mouseDownMonitor { NSEvent.removeMonitor(monitor) }

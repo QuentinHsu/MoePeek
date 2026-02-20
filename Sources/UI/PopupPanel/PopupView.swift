@@ -5,6 +5,7 @@ import SwiftUI
 struct PopupView: View {
     let coordinator: TranslationCoordinator
 
+    @Environment(\.openSettings) private var openSettings
     @State private var editableText: String = ""
     @State private var expandedProviders: Set<String> = []
     @State private var targetLang: String = Defaults[.targetLanguage]
@@ -87,16 +88,16 @@ struct PopupView: View {
                         }
                     )
 
-                    SettingsLink {
+                    Button {
+                        NSApp.activate(ignoringOtherApps: true)
+                        openSettings()
+                    } label: {
                         Image(systemName: "gearshape")
                             .font(.caption)
                             .foregroundStyle(.secondary)
                     }
                     .buttonStyle(.plain)
                     .help("打开设置")
-                    .simultaneousGesture(TapGesture().onEnded {
-                        NSApp.activate(ignoringOtherApps: true)
-                    })
                 }
                 .padding(.horizontal, 10)
                 .padding(.vertical, 4)

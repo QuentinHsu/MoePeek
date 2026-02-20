@@ -5,6 +5,7 @@ import SwiftUI
 /// Content for the menu bar dropdown.
 struct MenuItemView: View {
     let appDelegate: AppDelegate
+    @Environment(\.openSettings) private var openSettings
 
     private var appVersion: String {
         Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "?"
@@ -70,7 +71,7 @@ struct MenuItemView: View {
         }
 
         Button {
-            appDelegate.openSettings()
+            openSettings()
         } label: {
             Label("设置...", systemImage: "gearshape")
         }

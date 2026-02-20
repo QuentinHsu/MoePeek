@@ -22,7 +22,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         permissionManager = PermissionManager()
         coordinator = TranslationCoordinator(permissionManager: permissionManager, registry: registry)
         panelController = PopupPanelController(coordinator: coordinator)
-        onboardingController = OnboardingWindowController(permissionManager: permissionManager)
+        onboardingController = OnboardingWindowController(permissionManager: permissionManager, registry: registry)
         selectionMonitor = SelectionMonitor()
         triggerIconController = TriggerIconController()
 
@@ -35,35 +35,15 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         setupShortcuts()
         setupSelectionMonitor()
 
-        // Wire onComplete once so every path (first launch + menu bar re-open) behaves consistently.
-        onboardingController.onComplete = { [weak self] in
-            self?.openSettings()
-        }
-
-        // Show onboarding on first launch; skip if permissions already granted.
-        if permissionManager.allPermissionsGranted {
-            Defaults[.hasCompletedOnboarding] = true
-            openSettings()
-        } else if !Defaults[.hasCompletedOnboarding] {
-            DispatchQueue.main.async {
+        // Show onboarding on first launch; returning users start silently as a menu bar app.
+        if !Defaults[.hasCompletedOnboarding] {
+            // Delay to let SwiftUI finish scene setup; async alone is insufficient.
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
                 self.onboardingController.showWindow()
             }
-        } else {
-            openSettings()
         }
         if !permissionManager.allPermissionsGranted {
             permissionManager.startPolling()
-        }
-    }
-
-    func openSettings() {
-        // Workaround: SettingsLink is only available inside SwiftUI views.
-        // showSettingsWindow: is a private AppKit selector; monitor compatibility on macOS upgrades.
-        DispatchQueue.main.async {
-            NSApp.activate(ignoringOtherApps: true)
-            if !NSApp.sendAction(Selector(("showSettingsWindow:")), to: nil, from: nil) {
-                NSLog("[MoePeek] showSettingsWindow: selector failed — macOS version may have removed it")
-            }
         }
     }
 

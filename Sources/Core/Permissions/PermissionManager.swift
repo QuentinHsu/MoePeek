@@ -1,5 +1,9 @@
 import AppKit
 
+// "AXTrustedCheckOptionPrompt" — same value as kAXTrustedCheckOptionPrompt,
+// but using a string literal avoids the concurrency warning on the Unmanaged global var.
+nonisolated(unsafe) private let axTrustedPromptKey = "AXTrustedCheckOptionPrompt" as CFString
+
 /// Manages Accessibility and Screen Recording permission states with polling.
 @MainActor
 @Observable
@@ -19,7 +23,7 @@ final class PermissionManager {
 
     /// Prompt the system accessibility permission dialog.
     func requestAccessibility() {
-        let options = [kAXTrustedCheckOptionPrompt.takeRetainedValue(): true] as CFDictionary
+        let options = [axTrustedPromptKey: true] as CFDictionary
         _ = AXIsProcessTrustedWithOptions(options)
         startPolling()
     }
