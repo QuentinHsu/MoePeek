@@ -1245,26 +1245,6 @@
         }
       }
     },
-    "Translate to:" : {
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "翻译为："
-          }
-        }
-      }
-    },
-    "Translation" : {
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "翻译"
-          }
-        }
-      }
-    },
     "Test Connection" : {
       "extractionState" : "stale",
       "localizations" : {
@@ -1297,12 +1277,34 @@
         }
       }
     },
+    "Translate to:" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "翻译为："
+          }
+        }
+      }
+    },
     "Translating…" : {
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "翻译中…"
+          }
+        }
+      }
+    },
+    "Translation" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "翻译"
           }
         }
       }
