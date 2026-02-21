@@ -6,7 +6,7 @@ import SwiftUI
 struct NiuTransProvider: TranslationProvider {
     let id = "niutrans"
     let displayName = "NiuTrans"
-    let iconSystemName = "textformat.abc"
+    let iconSystemName = "n.circle.fill"
     let category: ProviderCategory = .traditional
     let supportsStreaming = false
     let isAvailable = true

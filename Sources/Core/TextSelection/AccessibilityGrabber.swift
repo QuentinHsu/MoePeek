@@ -16,9 +16,12 @@ enum AccessibilityGrabber {
             kAXFocusedUIElementAttribute as CFString,
             &focusedValue
         )
-        guard focusResult == .success else { return nil }
+        guard focusResult == .success,
+              let focusedRef = focusedValue,
+              CFGetTypeID(focusedRef) == AXUIElementGetTypeID()
+        else { return nil }
 
-        let focusedElement = focusedValue as! AXUIElement
+        let focusedElement = focusedRef as! AXUIElement
 
         var selectedValue: CFTypeRef?
         let selectResult = AXUIElementCopyAttributeValue(

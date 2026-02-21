@@ -5,8 +5,8 @@ enum AppRelaunch {
     static func relaunch() {
         let bundlePath = Bundle.main.bundlePath
         let task = Process()
-        task.executableURL = URL(fileURLWithPath: "/bin/bash")
-        task.arguments = ["-c", "sleep 0.3; open \"\(bundlePath)\""]
+        task.executableURL = URL(fileURLWithPath: "/usr/bin/open")
+        task.arguments = ["-n", bundlePath]
         try? task.run()
         NSApplication.shared.terminate(nil)
     }

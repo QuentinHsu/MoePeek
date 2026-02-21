@@ -7,7 +7,7 @@ import SwiftUI
 struct BaiduTranslateProvider: TranslationProvider {
     let id = "baidu"
     let displayName = "Baidu"
-    let iconSystemName = "character.textbox"
+    let iconSystemName = "pawprint.fill"
     let category: ProviderCategory = .traditional
     let supportsStreaming = false
     let isAvailable = true

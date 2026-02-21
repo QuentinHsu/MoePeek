@@ -2,6 +2,7 @@
   "sourceLanguage" : "en",
   "strings" : {
     "[Bing Translate: text truncated to 1000 characters]" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -486,6 +487,7 @@
       }
     },
     "Free, no API key needed." : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
