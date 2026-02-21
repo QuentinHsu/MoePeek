@@ -20,14 +20,18 @@
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-AGPL--3.0-green" alt="License" /></a>
 </p>
 
+<p align="center">
+  <img src="Resources/MoePeek-promo.webp" alt="MoePeek Preview" />
+</p>
+
 ## Features
 
 **Translation Modes**
 
-- **Select & Translate** — Select text in any app, get instant translation in a floating panel
-- **OCR Screenshot** — Capture a screen region and translate the recognized text
-- **Clipboard Translation** — Translate whatever's on your clipboard
-- **Manual Input** — Type or paste text to translate on demand
+- **Select & Translate**: Select text in any app, get instant translation in a floating panel
+- **OCR Screenshot**: Capture a screen region and translate the recognized text
+- **Clipboard Translation**: Translate whatever's on your clipboard
+- **Manual Input**: Type or paste text to translate on demand
 
 **Built-in Translation Services**
 
@@ -35,7 +39,7 @@
 |------|-----|-----|--------|
 | Google Translate | DeepL | OpenAI | Apple Translation |
 | Bing Translate | Baidu | DeepSeek | *(macOS 15+, on-device)* |
-| | NiuTrans | 智谱 GLM | |
+| Youdao Translate | NiuTrans | 智谱 GLM | |
 | | Caiyun | Ollama (local) | |
 
 **And More**
@@ -48,10 +52,10 @@
 
 ## Why MoePeek
 
-- **~5 MB app size** — Pure Swift 6, only 3 dependencies. No Electron, no WebView.
-- **~50 MB background memory** — Systematic memory leak prevention for long-running sessions.
-- **Privacy-friendly** — Apple Translation runs entirely on-device. API keys stored in macOS Keychain.
-- **Open source** — AGPL-3.0 licensed. Issues and feedback welcome.
+- **~5 MB app size**: Pure Swift 6, only 3 dependencies. No Electron, no WebView.
+- **~50 MB background memory**: Systematic memory leak prevention for long-running sessions.
+- **Privacy-friendly**: Apple Translation runs entirely on-device.
+- **Open source**: AGPL-3.0 licensed. Issues and feedback welcome.
 
 ## Installation
 
@@ -61,8 +65,8 @@ Download the latest `.dmg` or `.zip` from [GitHub Releases](https://github.com/c
 
 On first launch, MoePeek walks you through an onboarding flow to grant the required permissions:
 
-- **Accessibility** — Needed to grab selected text via the Accessibility API
-- **Screen Recording** — Needed for OCR screenshot translation
+- **Accessibility**: Needed to grab selected text via the Accessibility API
+- **Screen Recording**: Needed for OCR screenshot translation
 
 ### Default Shortcuts
 

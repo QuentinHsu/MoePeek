@@ -103,6 +103,7 @@ struct ProviderResultCard: View {
                     .textSelection(.enabled)
                     .frame(maxWidth: .infinity, alignment: .leading)
             }
+            .background { InteractiveMarker() }
         case let .completed(text):
             VStack(alignment: .leading, spacing: 4) {
                 Text(text)
@@ -123,6 +124,7 @@ struct ProviderResultCard: View {
                     .controlSize(.mini)
                 }
             }
+            .background { InteractiveMarker() }
         case let .error(message):
             VStack(alignment: .leading, spacing: 4) {
                 Label(message, systemImage: "exclamationmark.triangle")

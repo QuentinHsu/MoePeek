@@ -20,14 +20,19 @@
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-AGPL--3.0-green" alt="License" /></a>
 </p>
 
+
+<p align="center">
+  <img src="Resources/MoePeek-promo.webp" alt="MoePeek 预览" />
+</p>
+
 ## 功能
 
 **翻译方式**
 
-- **划词翻译** — 在任意应用中选中文字，浮窗即时展示翻译结果
-- **OCR 截图翻译** — 框选屏幕区域，识别并翻译其中的文字
-- **剪贴板翻译** — 一键翻译剪贴板中的内容
-- **手动输入** — 输入或粘贴文字进行翻译
+- **划词翻译**：在任意应用中选中文字，浮窗即时展示翻译结果
+- **OCR 截图翻译**：框选屏幕区域，识别并翻译其中的文字
+- **剪贴板翻译**：一键翻译剪贴板中的内容
+- **手动输入**：输入或粘贴文字进行翻译
 
 **内置翻译服务**
 
@@ -35,7 +40,7 @@
 |------|-----|-----|------|
 | Google 翻译 | DeepL | OpenAI | Apple 翻译 |
 | Bing 翻译 | 百度翻译 | DeepSeek | *（macOS 15+，离线可用）* |
-| | 小牛翻译 | 智谱 GLM | |
+| 有道翻译 | 小牛翻译 | 智谱 GLM | |
 | | 彩云小译 | Ollama（本地） | |
 
 **更多特性**
@@ -48,10 +53,10 @@
 
 ## 为什么选择 MoePeek
 
-- **约 5 MB 安装体积** — 纯 Swift 6 构建，仅 3 个依赖。没有 Electron，没有 WebView。
-- **约 50 MB 后台内存** — 系统性防控内存泄漏，长时间挂后台也稳定。
-- **注重隐私** — Apple 翻译完全在设备端运行，API Key 安全存储于 macOS 钥匙串。
-- **开源项目** — AGPL-3.0 协议，欢迎提 Issue 和反馈。
+- **约 5 MB 安装体积**：纯 Swift 6 构建，仅 3 个依赖。没有 Electron，没有 WebView。
+- **约 50 MB 后台内存**：系统性防控内存泄漏，长时间挂后台也稳定。
+- **注重隐私**：Apple 翻译完全在设备端运行。
+- **开源项目**：AGPL-3.0 协议，欢迎提 Issue 和反馈。
 
 ## 安装
 
@@ -61,8 +66,8 @@
 
 首次启动时，MoePeek 会引导你完成权限设置：
 
-- **辅助功能** — 用于通过 Accessibility API 获取选中文本
-- **屏幕录制** — 用于 OCR 截图翻译
+- **辅助功能**：用于通过 Accessibility API 获取选中文本
+- **屏幕录制**：用于 OCR 截图翻译
 
 ### 默认快捷键
 
@@ -106,9 +111,9 @@ MoePeek 的诞生受到了 [Easydict](https://github.com/tisfeng/Easydict) 和 [
 
 依赖库：
 
-- [KeyboardShortcuts](https://github.com/sindresorhus/KeyboardShortcuts) — Sindre Sorhus
-- [Defaults](https://github.com/sindresorhus/Defaults) — Sindre Sorhus
-- [Sparkle](https://sparkle-project.org/) — 自动更新
+- [KeyboardShortcuts](https://github.com/sindresorhus/KeyboardShortcuts)：Sindre Sorhus
+- [Defaults](https://github.com/sindresorhus/Defaults)：Sindre Sorhus
+- [Sparkle](https://sparkle-project.org/)：自动更新
 
 ## 赞助
 

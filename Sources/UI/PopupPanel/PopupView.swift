@@ -322,7 +322,7 @@ final class InteractiveMarkerView: NSView {
     override var mouseDownCanMoveWindow: Bool { false }
 }
 
-private struct InteractiveMarker: NSViewRepresentable {
+struct InteractiveMarker: NSViewRepresentable {
     func makeNSView(context: Context) -> InteractiveMarkerView { InteractiveMarkerView() }
     func updateNSView(_: InteractiveMarkerView, context: Context) {}
 }

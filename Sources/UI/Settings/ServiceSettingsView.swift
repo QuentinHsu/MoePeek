@@ -62,6 +62,7 @@ struct ServiceSettingsView: View {
                 }
             }
             .listStyle(.sidebar)
+            .scrollContentBackground(.hidden)
         }
     }
 
@@ -76,6 +77,7 @@ struct ServiceSettingsView: View {
                 provider.makeSettingsView()
                     .id(id)
             }
+            .scrollContentBackground(.hidden)
         } else {
             ContentUnavailableView(
                 "Select a provider",

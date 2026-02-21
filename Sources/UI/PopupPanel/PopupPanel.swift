@@ -50,9 +50,13 @@ final class PopupPanel: NSPanel {
     /// Intercepts left-mouse-down on non-interactive areas to start a window drag,
     /// while letting interactive controls (text views, buttons, gesture views) handle events normally.
     override func sendEvent(_ event: NSEvent) {
-        if event.type == .leftMouseDown, shouldStartWindowDrag(for: event) {
-            performDrag(with: event)
-            return
+        if event.type == .leftMouseDown {
+            if shouldStartWindowDrag(for: event) {
+                performDrag(with: event)
+                return
+            }
+            // Make panel key so text selection and other interactions work.
+            if !isKeyWindow { makeKey() }
         }
         super.sendEvent(event)
     }
