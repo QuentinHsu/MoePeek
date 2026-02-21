@@ -67,7 +67,7 @@ struct BingTranslateProvider: TranslationProvider {
         request.setValue("https://www.bing.com/translator", forHTTPHeaderField: "Referer")
         request.httpBody = formBody.data(using: .utf8)
 
-        let (data, response) = try await URLSession.shared.data(for: request)
+        let (data, response) = try await translationURLSession.data(for: request)
 
         guard let httpResponse = response as? HTTPURLResponse else {
             throw TranslationError.invalidResponse
@@ -160,7 +160,7 @@ private actor BingTokenManager {
         request.timeoutInterval = 15
         request.setValue(Self.userAgent, forHTTPHeaderField: "User-Agent")
 
-        let (data, response) = try await URLSession.shared.data(for: request)
+        let (data, response) = try await translationURLSession.data(for: request)
 
         guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
             throw TranslationError.apiError(

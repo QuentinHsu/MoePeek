@@ -39,7 +39,7 @@ final class OpenAIConnectionManager {
         request.setValue("Bearer \(apiKey)", forHTTPHeaderField: "Authorization")
 
         do {
-            let (data, response) = try await URLSession.shared.data(for: request)
+            let (data, response) = try await translationURLSession.data(for: request)
             guard let httpResponse = response as? HTTPURLResponse else {
                 modelFetchError = String(localized: "Invalid response")
                 return
@@ -93,7 +93,7 @@ final class OpenAIConnectionManager {
 
         let start = ContinuousClock.now
         do {
-            let (data, response) = try await URLSession.shared.data(for: request)
+            let (data, response) = try await translationURLSession.data(for: request)
             let ms = Int((ContinuousClock.now - start) / .milliseconds(1))
 
             guard let httpResponse = response as? HTTPURLResponse else {

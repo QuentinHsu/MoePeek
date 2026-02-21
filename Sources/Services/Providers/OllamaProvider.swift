@@ -65,7 +65,7 @@ struct OllamaProvider: TranslationProvider {
                     request.setValue("application/json", forHTTPHeaderField: "Content-Type")
                     request.httpBody = try JSONSerialization.data(withJSONObject: body)
 
-                    let (bytes, response) = try await URLSession.shared.bytes(for: request)
+                    let (bytes, response) = try await translationURLSession.bytes(for: request)
                     try await streamOpenAISSE(bytes, response: response, to: continuation)
                     continuation.finish()
                 } catch let error as URLError where error.code == .cannotConnectToHost || error.code == .timedOut {
@@ -95,7 +95,7 @@ struct OllamaProvider: TranslationProvider {
         var request = URLRequest(url: url)
         request.timeoutInterval = 5
 
-        let (data, response) = try await URLSession.shared.data(for: request)
+        let (data, response) = try await translationURLSession.data(for: request)
 
         guard let httpResponse = response as? HTTPURLResponse else {
             throw TranslationError.invalidResponse
@@ -246,7 +246,7 @@ private struct OllamaSettingsView: View {
         var request = URLRequest(url: pingURL)
         request.timeoutInterval = 3
         do {
-            let (_, response) = try await URLSession.shared.data(for: request)
+            let (_, response) = try await translationURLSession.data(for: request)
             if let http = response as? HTTPURLResponse, http.statusCode == 200 {
                 serverStatus = .running
             } else {

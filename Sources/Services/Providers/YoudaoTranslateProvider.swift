@@ -78,7 +78,7 @@ struct YoudaoTranslateProvider: TranslationProvider {
         request.setValue("OUTFOX_SEARCH_USER_ID=0@0.0.0.0;", forHTTPHeaderField: "Cookie")
         request.httpBody = formParts.joined(separator: "&").data(using: .utf8)
 
-        let (data, response) = try await URLSession.shared.data(for: request)
+        let (data, response) = try await translationURLSession.data(for: request)
 
         guard let httpResponse = response as? HTTPURLResponse else {
             throw TranslationError.invalidResponse
@@ -229,7 +229,7 @@ private actor YoudaoKeyManager {
         request.setValue("https://fanyi.youdao.com/", forHTTPHeaderField: "Referer")
         request.setValue("OUTFOX_SEARCH_USER_ID=0@0.0.0.0;", forHTTPHeaderField: "Cookie")
 
-        let (data, response) = try await URLSession.shared.data(for: request)
+        let (data, response) = try await translationURLSession.data(for: request)
 
         guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
             // Fallback to hardcoded defaults if key fetch fails

@@ -52,7 +52,7 @@ struct OpenAICompatibleProvider: TranslationProvider {
             let task = Task {
                 do {
                     let request = try buildRequest(text: text, sourceLang: sourceLang, targetLang: targetLang)
-                    let (bytes, response) = try await URLSession.shared.bytes(for: request)
+                    let (bytes, response) = try await translationURLSession.bytes(for: request)
                     try await streamOpenAISSE(bytes, response: response, to: continuation)
                     continuation.finish()
                 } catch {

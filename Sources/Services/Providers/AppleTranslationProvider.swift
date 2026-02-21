@@ -95,6 +95,7 @@ struct AppleTranslationProvider: TranslationProvider {
                     windowRef.value = window
 
                     if Task.isCancelled {
+                        window.contentView = nil
                         window.close()
                         continuation.resume(throwing: CancellationError())
                         return

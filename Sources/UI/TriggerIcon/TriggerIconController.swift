@@ -157,6 +157,7 @@ final class TriggerIconController {
             panel.animator().alphaValue = 0
         }, completionHandler: { [weak self] in
             Task { @MainActor in
+                panel.contentView = nil
                 panel.close()
                 self?.cleanup()
                 self?.onDismissed?()
@@ -168,6 +169,7 @@ final class TriggerIconController {
     func dismissSilently() {
         guard let panel else { return }
         cancelAllTimers()
+        panel.contentView = nil
         panel.close()
         cleanup()
     }
@@ -224,6 +226,7 @@ final class TriggerIconController {
 
         guard let panel else { return }
         // Immediately hide the icon
+        panel.contentView = nil
         panel.close()
         cleanup()
 

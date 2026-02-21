@@ -28,12 +28,16 @@ enum ScreenCaptureOCR {
             throw OCRError.captureCancelled
         }
 
-        // Read image from clipboard
-        let pasteboard = NSPasteboard.general
-        guard let image = NSImage(pasteboard: pasteboard),
-              let cgImage = image.cgImage(forProposedRect: nil, context: nil, hints: nil)
-        else {
-            throw OCRError.noImageInClipboard
+        // Read image from clipboard and perform OCR inside autoreleasepool
+        // to ensure large screenshot images are freed promptly.
+        let cgImage: CGImage = try autoreleasepool {
+            let pasteboard = NSPasteboard.general
+            guard let image = NSImage(pasteboard: pasteboard),
+                  let cg = image.cgImage(forProposedRect: nil, context: nil, hints: nil)
+            else {
+                throw OCRError.noImageInClipboard
+            }
+            return cg
         }
 
         return try await recognizeText(in: cgImage)

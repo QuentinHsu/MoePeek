@@ -66,7 +66,7 @@ struct BaiduTranslateProvider: TranslationProvider {
         request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
         request.httpBody = formParts.joined(separator: "&").data(using: .utf8)
 
-        let (data, response) = try await URLSession.shared.data(for: request)
+        let (data, response) = try await translationURLSession.data(for: request)
 
         guard let httpResponse = response as? HTTPURLResponse else {
             throw TranslationError.invalidResponse

@@ -51,6 +51,18 @@ extension TranslationProvider {
     var category: ProviderCategory { .llm }
 }
 
+// MARK: - Shared URLSession (zero-cache)
+
+/// A shared URLSession with caching disabled. Translation API responses are unique
+/// per request and should not be cached; using the default URLSession.shared would
+/// accumulate up to 25 MB+ of useless cache data over time.
+let translationURLSession: URLSession = {
+    let config = URLSessionConfiguration.default
+    config.urlCache = nil
+    config.requestCachePolicy = .reloadIgnoringLocalCacheData
+    return URLSession(configuration: config)
+}()
+
 // MARK: - Non-Streaming Helper
 
 extension TranslationProvider {
