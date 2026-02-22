@@ -67,7 +67,7 @@ struct PopupView: View {
             editableText = coordinator.sourceText
             sourceLang = Defaults[.sourceLanguage]
             targetLang = coordinator.targetLanguage
-            expandedProviders = Set(coordinator.registry.enabledProviders.map(\.id))
+            expandedProviders = Set(coordinator.activeSlots.map(\.id))
         }
     }
 
@@ -158,7 +158,7 @@ struct PopupView: View {
                 // Provider results
                 ScrollView {
                     VStack(spacing: 6) {
-                        ForEach(coordinator.registry.enabledProviders, id: \.id) { provider in
+                        ForEach(coordinator.activeSlots, id: \.id) { provider in
                             if let state = coordinator.providerStates[provider.id] {
                                 ProviderResultCard(
                                     provider: provider,

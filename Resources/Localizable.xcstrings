@@ -1,6 +1,16 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
+    "(unknown)" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "（未知）"
+          }
+        }
+      }
+    },
     "[Bing Translate: text truncated to 1000 characters]" : {
       "extractionState" : "stale",
       "localizations" : {
@@ -8,6 +18,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "[Bing 翻译：文本已截断至 1000 字符]"
+          }
+        }
+      }
+    },
+    "%@ model(s) enabled — will run in parallel during translation." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "已启用 %@ 个模型 - 翻译时将并行运行。"
           }
         }
       }
@@ -62,6 +82,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "辅助功能权限未授权。请前往设置中开启。"
+          }
+        }
+      }
+    },
+    "Add Custom Provider" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "添加自定义服务"
           }
         }
       }
@@ -157,6 +187,16 @@
         }
       }
     },
+    "Are you sure you want to delete \"%@\"? This will remove all its settings." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "确定要删除「%@」吗？这将移除其所有设置。"
+          }
+        }
+      }
+    },
     "auto" : {
       "extractionState" : "stale",
       "localizations" : {
@@ -185,16 +225,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "自动检测源语言"
-          }
-        }
-      }
-    },
-    "Show floating icon on text selection" : {
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "选中文字时显示悬浮球"
           }
         }
       }
@@ -241,6 +271,27 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "系统内置翻译，无需 API Key（macOS 15+）"
+          }
+        }
+      }
+    },
+    "Capability data from" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "能力数据来源"
+          }
+        }
+      }
+    },
+    "Capability info based on approximate match and may be inaccurate" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "能力信息基于模糊匹配，可能不准确"
           }
         }
       }
@@ -304,6 +355,26 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "从列表中选择一个翻译服务进行配置。"
+          }
+        }
+      }
+    },
+    "Click the refresh button above to fetch available models, or add a custom model below." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "点击上方刷新按钮获取可用模型，或在下方手动添加。"
+          }
+        }
+      }
+    },
+    "Click the refresh button above to fetch available models." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "点击上方刷新按钮获取可用模型。"
           }
         }
       }
@@ -387,6 +458,17 @@
     "Copyright © 2025-2026 MoePeek. All rights reserved." : {
 
     },
+    "Custom" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "自定义"
+          }
+        }
+      }
+    },
     "Default Height: %lld" : {
       "extractionState" : "stale",
       "localizations" : {
@@ -398,6 +480,16 @@
         }
       }
     },
+    "Default Model" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "默认模型"
+          }
+        }
+      }
+    },
     "Default Width: %lld" : {
       "extractionState" : "stale",
       "localizations" : {
@@ -405,6 +497,28 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "默认宽度：%lld"
+          }
+        }
+      }
+    },
+    "Delete" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "删除"
+          }
+        }
+      }
+    },
+    "Delete Provider" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "删除服务"
           }
         }
       }
@@ -802,9 +916,6 @@
         }
       }
     },
-    "Model" : {
-
-    },
     "Model name" : {
       "extractionState" : "stale",
       "localizations" : {
@@ -1041,6 +1152,16 @@
         }
       }
     },
+    "Parallel Models" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "并行模型"
+          }
+        }
+      }
+    },
     "Permissions Need Re-Authorization" : {
       "localizations" : {
         "zh-Hans" : {
@@ -1236,6 +1357,16 @@
         }
       }
     },
+    "Running multiple local models in parallel requires sufficient VRAM. Ollama may swap models causing increased latency." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "并行运行多个本地模型需要足够的显存。Ollama 可能会换入换出模型，导致延迟增加。"
+          }
+        }
+      }
+    },
     "Screen capture was cancelled" : {
       "extractionState" : "stale",
       "localizations" : {
@@ -1311,6 +1442,26 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "选择翻译服务"
+          }
+        }
+      }
+    },
+    "Select models to run in parallel during translation (max %@)." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "选择翻译时并行运行的模型（最多 %@ 个）。"
+          }
+        }
+      }
+    },
+    "Select models to run in parallel during translation." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "选择翻译时并行运行的模型。"
           }
         }
       }
@@ -1391,6 +1542,17 @@
         }
       }
     },
+    "Show floating icon on text selection" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "选中文字时显示悬浮球"
+          }
+        }
+      }
+    },
     "Skip" : {
       "extractionState" : "stale",
       "localizations" : {
@@ -1441,6 +1603,28 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "授权后状态会自动更新"
+          }
+        }
+      }
+    },
+    "Supports reasoning / chain-of-thought" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "支持推理 / 思维链"
+          }
+        }
+      }
+    },
+    "Supports tool calling" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "支持工具调用"
           }
         }
       }
@@ -1639,6 +1823,16 @@
         }
       }
     },
+    "Used when no models are selected below." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "未选择下方模型时使用此模型。"
+          }
+        }
+      }
+    },
     "Uses Bing Translator, may be rate-limited." : {
       "localizations" : {
         "zh-Hans" : {
@@ -1696,6 +1890,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "有道解密失败，请重试。"
+          }
+        }
+      }
+    },
+    "Youdao response parsing failed. The service may be temporarily unavailable." : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "有道翻译响应解析失败，服务可能暂时不可用。"
           }
         }
       }
