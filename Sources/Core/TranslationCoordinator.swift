@@ -31,6 +31,9 @@ final class TranslationCoordinator {
     /// Snapshot of expanded provider slots for the current translation session.
     /// PopupView reads this instead of `registry.enabledSlots` to avoid recomputation during streaming.
     private(set) var activeSlots: [any TranslationProvider] = []
+    /// Monotonically increasing counter; increments each time `translate()` is called.
+    /// Used by PopupView to reset `expandedProviders` for subsequent translations.
+    private(set) var translationGeneration: Int = 0
 
     let registry: TranslationProviderRegistry
     private let permissionManager: PermissionManager
@@ -144,6 +147,7 @@ final class TranslationCoordinator {
 
         let providers = registry.enabledSlots
         activeSlots = providers
+        translationGeneration += 1
         guard !providers.isEmpty else {
             globalError = String(localized: "No providers enabled. Enable at least one in Settings.")
             return

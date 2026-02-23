@@ -69,6 +69,9 @@ struct PopupView: View {
             targetLang = coordinator.targetLanguage
             expandedProviders = Set(coordinator.activeSlots.map(\.id))
         }
+        .onChange(of: coordinator.translationGeneration) { _, _ in
+            expandedProviders = Set(coordinator.activeSlots.map(\.id))
+        }
     }
 
     // MARK: - Active Content

@@ -38,6 +38,7 @@ struct ProviderResultCard: View {
                 .contentShape(Rectangle())
             }
             .buttonStyle(.plain)
+            .background { InteractiveMarker() }
 
             // Body — visible when expanded
             if isExpanded {
@@ -143,6 +144,7 @@ struct ProviderResultCard: View {
                     }
                 }
             }
+            .background { InteractiveMarker() }
         }
     }
 }
