@@ -144,6 +144,12 @@ Built with:
 - [Defaults](https://github.com/sindresorhus/Defaults) by Sindre Sorhus
 - [Sparkle](https://sparkle-project.org/) for auto-updates
 
+## Contributors
+
+<a href="https://github.com/cosZone/MoePeek/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=cosZone/MoePeek" />
+</a>
+
 ## Sponsor
 
 <a href="https://afdian.com/a/cosyu"><img width="20%" src="https://pic1.afdiancdn.com/static/img/welcome/button-sponsorme.jpg" alt="Sponsor on Afdian"></a>

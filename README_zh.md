@@ -145,6 +145,12 @@ MoePeek 的诞生受到了 [Easydict](https://github.com/tisfeng/Easydict) 和 [
 - [Defaults](https://github.com/sindresorhus/Defaults)：Sindre Sorhus
 - [Sparkle](https://sparkle-project.org/)：自动更新
 
+## 贡献者
+
+<a href="https://github.com/cosZone/MoePeek/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=cosZone/MoePeek" />
+</a>
+
 ## 赞助
 
 <a href="https://afdian.com/a/cosyu"><img width="20%" src="https://pic1.afdiancdn.com/static/img/welcome/button-sponsorme.jpg" alt="在爱发电上赞助"></a>
