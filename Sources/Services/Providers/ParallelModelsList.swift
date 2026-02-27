@@ -158,13 +158,7 @@ struct ParallelModelsList: View {
 
             let totalCount = enabledModels.subtracting([defaultModel]).count + (defaultModelInList ? 1 : 0)
             if totalCount > 0 {
-                Text(
-                    String(
-                        format: String(localized: "%lld model(s) enabled — will run in parallel during translation."),
-                        locale: .current,
-                        Int64(totalCount)
-                    )
-                )
+                Text("\(totalCount) model(s) enabled — will run in parallel during translation.")
                     .font(.caption)
                     .foregroundStyle(.secondary)
             }

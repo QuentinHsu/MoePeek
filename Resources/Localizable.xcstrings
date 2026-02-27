@@ -377,21 +377,12 @@
       }
     },
     "Checking…" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "检查中…"
-          }
-        }
-      }
-    },
-    "Clear All" : {
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "全部清除"
           }
         }
       }
@@ -402,6 +393,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "从列表中选择一个翻译服务进行配置。"
+          }
+        }
+      }
+    },
+    "Clear All" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "全部清除"
           }
         }
       }
@@ -417,6 +419,7 @@
       }
     },
     "Click the refresh button above to fetch available models." : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -1297,6 +1300,7 @@
       }
     },
     "Parallel Models" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -1634,6 +1638,7 @@
 
     },
     "Select a model" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -1653,9 +1658,6 @@
           }
         }
       }
-    },
-    "Select models to run in parallel during translation (max %@)." : {
-
     },
     "Select models to run in parallel during translation (max %lld)." : {
       "extractionState" : "stale",

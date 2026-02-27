@@ -176,7 +176,8 @@ struct OpenAIConfigFields: View {
             if enabledModelsState != newValue { enabledModelsState = newValue }
         }
         .task {
-            if connectionManager.fetchedModels.isEmpty,
+            if !compact,
+               connectionManager.fetchedModels.isEmpty,
                !apiKeyText.isEmpty,
                !baseURLText.isEmpty {
                 await connectionManager.fetchModels(
@@ -186,7 +187,9 @@ struct OpenAIConfigFields: View {
                     silent: true
                 )
             }
-            await metaService.fetchIfNeeded()
+            if !compact {
+                await metaService.fetchIfNeeded()
+            }
         }
     }
 }
