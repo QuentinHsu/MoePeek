@@ -36,12 +36,18 @@ jobs:
         with:
           install: true
 
-      - name: Write unsigned Signing.xcconfig
+      - name: Import signing certificate
+        uses: apple-actions/import-codesign-certs@v3
+        with:
+          p12-file-base64: ${{ secrets.SIGNING_CERTIFICATE_P12 }}
+          p12-password: ${{ secrets.SIGNING_CERTIFICATE_PASSWORD }}
+
+      - name: Write Signing.xcconfig
         run: |
           cat > Configurations/Signing.xcconfig << EOF
           MOEPEEK_CODE_SIGN_STYLE = Manual
-          MOEPEEK_CODE_SIGN_IDENTITY = -
-          MOEPEEK_DEVELOPMENT_TEAM =
+          MOEPEEK_CODE_SIGN_IDENTITY = ${{ secrets.SIGNING_IDENTITY }}
+          MOEPEEK_DEVELOPMENT_TEAM = ${{ secrets.DEVELOPMENT_TEAM }}
           SPARKLE_ED_PUBLIC_KEY = ${{ secrets.SPARKLE_ED_PUBLIC_KEY }}
           EOF
 
@@ -69,6 +75,15 @@ jobs:
             VALIDATE_STRINGS_FILES_WHILE_COPYING=NO \
             MARKETING_VERSION=${{ steps.version.outputs.version }} \
             CURRENT_PROJECT_VERSION=${{ github.run_number }}
+
+      - name: Verify code signature
+        run: |
+          codesign --verify --strict \
+            build/MoePeek.xcarchive/Products/Applications/MoePeek.app
+          echo "Signature info:"
+          codesign -dvvv \
+            build/MoePeek.xcarchive/Products/Applications/MoePeek.app 2>&1 \
+            | grep -E "Authority|Identifier|TeamIdentifier"
 
       - name: Prepare app bundle
         run: |

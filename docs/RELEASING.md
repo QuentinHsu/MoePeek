@@ -8,8 +8,29 @@
 
 | Secret | 说明 |
 |--------|------|
+| `SIGNING_CERTIFICATE_P12` | 签名证书 .p12 文件的 base64 编码（如 `Apple Development` 或 `Developer ID Application`） |
+| `SIGNING_CERTIFICATE_PASSWORD` | 导出 .p12 时设置的密码 |
+| `SIGNING_IDENTITY` | 证书身份，如 `Apple Development: me@nahida.icu (3SX3NLLQK2)` |
+| `DEVELOPMENT_TEAM` | Apple Developer Team ID |
 | `SPARKLE_ED_PUBLIC_KEY` | Sparkle 更新验证用的 Ed25519 公钥 |
 | `SPARKLE_ED_PRIVATE_KEY` | 签名 appcast 条目用的 Ed25519 私钥 |
+
+#### 导出签名证书（一次性操作）
+
+1. 打开 **钥匙串访问**（Keychain Access）
+2. 在 "login" 钥匙串中找到签名证书（如 `Apple Development: me@nahida.icu`）
+3. 展开证书左边的三角，确认包含私钥
+4. 右键证书 → **导出** → 格式选 `.p12` → 设置导出密码 → 保存
+5. 转 base64 并复制到剪贴板：
+   ```bash
+   base64 -i ~/path/to/certificate.p12 | pbcopy
+   ```
+6. 粘贴到 GitHub Secret `SIGNING_CERTIFICATE_P12`
+7. 导出密码填入 GitHub Secret `SIGNING_CERTIFICATE_PASSWORD`
+
+> **为什么需要签名？** macOS TCC 数据库通过代码签名身份追踪辅助功能和屏幕录制等权限。使用固定证书签名可确保用户更新应用后无需重新授权。
+
+#### 生成 Sparkle 密钥对
 
 使用 Sparkle 的 `generate_keys` 工具生成密钥对：
 
@@ -32,11 +53,12 @@ git push origin v0.2.0
 ```
 
 CI 会自动完成以下步骤：
-1. 构建 Release archive
-2. 生成 ZIP 和 DMG
-3. 下载 Sparkle CLI 工具（版本自动匹配 `Package.resolved`）
-4. 生成 `appcast.xml`（保留历史版本记录）
-5. 创建 **已发布** 的 GitHub Release，包含 ZIP、DMG 和 `appcast.xml`
+1. 导入签名证书并构建 Release archive
+2. 验证代码签名（确保 Authority 和 TeamIdentifier 正确）
+3. 生成 ZIP 和 DMG
+4. 下载 Sparkle CLI 工具（版本自动匹配 `Package.resolved`）
+5. 生成 `appcast.xml`（保留历史版本记录）
+6. 创建 **已发布** 的 GitHub Release，包含 ZIP、DMG 和 `appcast.xml`
 
 ## 手动触发（测试用）
 
@@ -77,3 +99,9 @@ CI 会自动完成以下步骤：
 - 确认 release 不是 draft（draft release 不包含在 `latest` 中）
 - 检查 `Project.swift` 中 `SUFeedURL` 是否指向正确的 URL
 - 确认最新 release 中包含 `appcast.xml` 资源文件
+
+### 更新后辅助功能/屏幕录制权限丢失
+
+- 检查 CI 日志中 "Verify code signature" 步骤，确认 `Authority` 包含签名身份且 `TeamIdentifier` 正确
+- 如果签名验证失败，检查 Prod 环境中 `SIGNING_CERTIFICATE_P12`、`SIGNING_CERTIFICATE_PASSWORD`、`SIGNING_IDENTITY`、`DEVELOPMENT_TEAM` 是否配置正确
+- 证书过期后需要重新导出并更新 `SIGNING_CERTIFICATE_P12` secret
