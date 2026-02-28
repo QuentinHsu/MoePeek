@@ -57,6 +57,8 @@ private struct SourceTextEditor: NSViewRepresentable {
         textView.delegate = context.coordinator
         textView.string = text
         textView.font = .systemFont(ofSize: fontSize)
+        textView.textColor = .labelColor
+        textView.insertionPointColor = .labelColor
         textView.textContainerInset = .zero
         textView.textContainer?.lineFragmentPadding = 0
         textView.onSubmit = onSubmit
@@ -80,6 +82,8 @@ private struct SourceTextEditor: NSViewRepresentable {
         }
 
         textView.font = .systemFont(ofSize: fontSize)
+        textView.textColor = .labelColor
+        textView.insertionPointColor = .labelColor
         textView.onSubmit = onSubmit
 
         if !context.coordinator.didFocusInitially {
