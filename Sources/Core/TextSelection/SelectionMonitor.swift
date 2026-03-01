@@ -77,7 +77,7 @@ final class SelectionMonitor {
             let dx = point.x - downPoint.x
             let dy = point.y - downPoint.y
             let distance = sqrt(dx * dx + dy * dy)
-            wasDragOrMultiClick = distance > 3
+            wasDragOrMultiClick = distance > 5
         }
         mouseDownPoint = nil
 
@@ -92,7 +92,7 @@ final class SelectionMonitor {
             guard let self, !Task.isCancelled else { return }
 
             // Tier 1: Accessibility API — fast, non-invasive
-            if let text = AccessibilityGrabber.grabSelectedText(),
+            if let text = AccessibilityGrabber.grabSelectedText(near: point),
                !text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
                 self.onTextSelected?(text, point)
                 return

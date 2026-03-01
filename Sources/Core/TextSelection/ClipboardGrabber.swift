@@ -56,6 +56,11 @@ enum ClipboardGrabber {
             try? await Task.sleep(for: .milliseconds(20))
         }
 
+        // If changeCount didn't change, ⌘C copied nothing — don't return stale clipboard content
+        guard pasteboard.changeCount != previousCount else {
+            return nil
+        }
+
         let postCopyCount = pasteboard.changeCount
         let text = pasteboard.string(forType: .string)
 
